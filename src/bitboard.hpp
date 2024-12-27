@@ -20,7 +20,7 @@ class BitBoard {
     constexpr BitBoard& operator=(const BitBoard& other) = default;
 
     [[nodiscard]] constexpr explicit operator std::uint64_t() const noexcept { return bitboard_; };
-    [[nodiscard]] constexpr explicit operator bool() const noexcept { return bitboard_ != 0; }
+    [[nodiscard]] constexpr explicit operator bool() const noexcept { return bitboard_ != 0ULL; }
     [[nodiscard]] constexpr explicit operator std::string() const noexcept {
         std::string str_bitset = std::bitset<64>(bitboard_).to_string();
 
@@ -35,7 +35,7 @@ class BitBoard {
         return ret;
     }
 
-    [[nodiscard]] constexpr bool empty() const noexcept { return bitboard_ == 0; }
+    [[nodiscard]] constexpr bool empty() const noexcept { return bitboard_ == 0ULL; }
 
     [[nodiscard]] constexpr BitBoard operator|(const BitBoard& other) const noexcept {
         return BitBoard(bitboard_ | other.bitboard_);

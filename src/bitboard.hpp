@@ -23,7 +23,7 @@ class BitBoard {
 
     [[nodiscard]] constexpr explicit operator std::uint64_t() const noexcept { return bitboard_; };
     [[nodiscard]] constexpr explicit operator bool() const noexcept { return bitboard_ != 0ULL; }
-    [[nodiscard]] constexpr explicit operator std::string() const noexcept {
+    [[nodiscard]] explicit           operator std::string() const noexcept {
         std::string str_bitset = std::bitset<64>(bitboard_).to_string();
 
         std::string ret;
@@ -38,6 +38,8 @@ class BitBoard {
     }
 
     [[nodiscard]] constexpr bool empty() const noexcept { return bitboard_ == 0ULL; }
+
+    [[nodiscard]] constexpr BitBoard operator~() const noexcept { return BitBoard(~bitboard_); }
 
     [[nodiscard]] constexpr BitBoard operator|(const BitBoard& other) const noexcept {
         return BitBoard(bitboard_ | other.bitboard_);
@@ -65,18 +67,6 @@ class BitBoard {
 
     [[nodiscard]] constexpr BitBoard operator>>(const std::uint8_t shift) const noexcept {
         return bitboard_ >> shift;
-    }
-
-    template<Direction::underlying dir>
-    [[nodiscard]] constexpr BitBoard shift() {
-        if constexpr (dir == Direction::underlying::NORTH)
-            return *this << 8;
-        if constexpr (dir == Direction::underlying::SOUTH)
-            return *this << 8;
-        if constexpr (dir == Direction::underlying::NORTH)
-            return *this << 8;
-        if constexpr (dir == Direction::underlying::NORTH)
-            return *this << 8;
     }
 
     constexpr BitBoard& operator|=(const BitBoard& other) noexcept {

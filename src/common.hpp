@@ -8,6 +8,8 @@
 
 namespace Volta::Chess {
 
+class BitBoard;
+
 class Direction {
    private:
     enum class underlying : std::int8_t {
@@ -24,17 +26,17 @@ class Direction {
 
     underlying direction;
 
-    constexpr operator underlying() { return direction; }
-
     constexpr Direction(const underlying dir) :
         direction{dir} {}
 
-   public:
     using underlying_type_t = std::underlying_type_t<underlying>;
 
     static_assert(std::is_same_v<decltype(Utility::to_underlying(direction)), underlying_type_t>);
 
+   public:
     constexpr auto to_underlying() { return Utility::to_underlying(direction); }
+
+    constexpr operator underlying() { return direction; }
 
     static constexpr Direction NORTH() { return underlying::NORTH; }
     static constexpr Direction SOUTH() { return underlying::SOUTH; }
@@ -46,7 +48,8 @@ class Direction {
     static constexpr Direction SOUTH_EAST() { return underlying::SOUTH_EAST; }
     static constexpr Direction SOUTH_WEST() { return underlying::SOUTH_WEST; }
 
-    friend class BitBoard;
+    template<Direction::underlying dir>
+    friend constexpr BitBoard shift(BitBoard bb);
 };
 
 }

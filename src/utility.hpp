@@ -6,7 +6,7 @@
 namespace Volta::Utility {
 
 template<typename T>
-auto to_underlying(T value) {
+constexpr auto to_underlying(T value) {
     return static_cast<std::underlying_type_t<T>>(value);
 }
 

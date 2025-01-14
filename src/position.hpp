@@ -5,6 +5,12 @@
 
 #include "bitboard.hpp"
 
-namespace Volta::Chess {}
+namespace Volta::Chess {
+
+class PositionSlice {};
+
+class Position {};
+
+}
 
 #endif

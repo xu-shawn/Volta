@@ -1,6 +1,7 @@
 #ifndef VOLTA_COORDINATES_HPP__
 #define VOLTA_COORDINATES_HPP__
 
+#include <cassert>
 #include <cstdint>
 #include <type_traits>
 
@@ -35,6 +36,15 @@ class File {
     static_assert(std::is_same_v<decltype(Utility::to_underlying(file)), underlying_type_t>);
 
     constexpr auto to_underlying() const noexcept { return Utility::to_underlying(file); }
+
+    constexpr File(const underlying_type_t ordinal) :
+        file{ordinal} {}
+
+    static constexpr File from_ordinal(auto ordinal) {
+        assert(ordinal >= 0);
+        assert(ordinal < 8);
+        return File{static_cast<underlying_type_t>(ordinal)};
+    }
 
     static constexpr File FILE_A() noexcept { return underlying::FILE_A; }
     static constexpr File FILE_B() noexcept { return underlying::FILE_B; }
@@ -76,6 +86,15 @@ class Rank {
 
     constexpr auto to_underlying() const noexcept { return Utility::to_underlying(rank); }
 
+    constexpr Rank(const underlying_type_t ordinal) :
+        rank{ordinal} {}
+
+    static constexpr Rank from_ordinal(auto ordinal) {
+        assert(ordinal >= 0);
+        assert(ordinal < 8);
+        return Rank{static_cast<underlying_type_t>(ordinal)};
+    }
+
     static constexpr Rank RANK_1() noexcept { return underlying::RANK_1; }
     static constexpr Rank RANK_2() noexcept { return underlying::RANK_2; }
     static constexpr Rank RANK_3() noexcept { return underlying::RANK_3; }
@@ -91,8 +110,42 @@ class Rank {
 
 class Square {
    private:
+    // clang-format off
     enum class underlying : std::uint8_t {
+        A1 = 0, B1, C1, D1, E1, F1, G1, H1,
+        A2, B2, C2, D2, E2, F2, G2, H2,
+        A3, B3, C3, D3, E3, F3, G3, H3,
+        A4, B4, C4, D4, E4, F4, G4, H4,
+        A5, B5, C5, D5, E5, F5, G5, H5,
+        A6, B6, C6, D6, E6, F6, G6, H6,
+        A7, B7, C7, D7, E7, F7, G7, H7,
+        A8, B8, C8, D8, E8, F8, G8, H8,
+        None,
     };
+    // clang-format on
+
+    underlying square;
+
+    constexpr Square(underlying sq) :
+        square{sq} {}
+
+   public:
+    using underlying_type_t = std::underlying_type_t<underlying>;
+
+    static_assert(std::is_same_v<decltype(Utility::to_underlying(square)), underlying_type_t>);
+
+    constexpr auto to_underlying() const noexcept { return Utility::to_underlying(square); }
+
+    constexpr Square() :
+        square{underlying::None} {}
+
+    constexpr Square(File f, Rank r) :
+        square{static_cast<underlying_type_t>(f.to_underlying() + r.to_underlying() * 8)} {}
+
+    constexpr File file() { return File::from_ordinal(to_underlying() % 8); }
+    constexpr Rank rank() { return Rank::from_ordinal(to_underlying() / 8); }
+
+    static constexpr Square NONE() { return underlying::None; }
 };
 
 }

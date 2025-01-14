@@ -52,6 +52,27 @@ class Direction {
     friend constexpr BitBoard shift(BitBoard bb);
 };
 
+class Color {
+   private:
+    enum class underlying : std::uint8_t {
+        WHITE,
+        BLACK
+    };
+
+    constexpr Color(underlying c) :
+        color{c} {}
+
+    underlying color;
+
+   public:
+    using underlying_type_t = std::underlying_type_t<underlying>;
+
+    constexpr auto to_underlying() const noexcept { return Utility::to_underlying(color); }
+
+    static constexpr Color       WHITE() noexcept { return underlying::WHITE; }
+    static constexpr Color       BLACK() noexcept { return underlying::BLACK; }
+    static constexpr std::size_t COUNT() noexcept { return 2; }
+};
 }
 
 #endif

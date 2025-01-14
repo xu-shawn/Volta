@@ -34,16 +34,16 @@ class File {
 
     static_assert(std::is_same_v<decltype(Utility::to_underlying(file)), underlying_type_t>);
 
-    constexpr auto to_underlying() { return Utility::to_underlying(file); }
+    constexpr auto to_underlying() const noexcept { return Utility::to_underlying(file); }
 
-    static constexpr File FILE_A() { return underlying::FILE_A; }
-    static constexpr File FILE_B() { return underlying::FILE_B; }
-    static constexpr File FILE_C() { return underlying::FILE_C; }
-    static constexpr File FILE_D() { return underlying::FILE_D; }
-    static constexpr File FILE_E() { return underlying::FILE_E; }
-    static constexpr File FILE_F() { return underlying::FILE_F; }
-    static constexpr File FILE_G() { return underlying::FILE_G; }
-    static constexpr File FILE_H() { return underlying::FILE_H; }
+    static constexpr File FILE_A() noexcept { return underlying::FILE_A; }
+    static constexpr File FILE_B() noexcept { return underlying::FILE_B; }
+    static constexpr File FILE_C() noexcept { return underlying::FILE_C; }
+    static constexpr File FILE_D() noexcept { return underlying::FILE_D; }
+    static constexpr File FILE_E() noexcept { return underlying::FILE_E; }
+    static constexpr File FILE_F() noexcept { return underlying::FILE_F; }
+    static constexpr File FILE_G() noexcept { return underlying::FILE_G; }
+    static constexpr File FILE_H() noexcept { return underlying::FILE_H; }
 
     constexpr BitBoard to_bb() { return FILE_A_BB << to_underlying(); }
     constexpr          operator BitBoard() { return to_bb(); }
@@ -74,19 +74,25 @@ class Rank {
 
     static_assert(std::is_same_v<decltype(Utility::to_underlying(rank)), underlying_type_t>);
 
-    constexpr auto to_underlying() { return Utility::to_underlying(rank); }
+    constexpr auto to_underlying() const noexcept { return Utility::to_underlying(rank); }
 
-    static constexpr Rank RANK_1() { return underlying::RANK_1; }
-    static constexpr Rank RANK_2() { return underlying::RANK_2; }
-    static constexpr Rank RANK_3() { return underlying::RANK_3; }
-    static constexpr Rank RANK_4() { return underlying::RANK_4; }
-    static constexpr Rank RANK_5() { return underlying::RANK_5; }
-    static constexpr Rank RANK_6() { return underlying::RANK_6; }
-    static constexpr Rank RANK_7() { return underlying::RANK_7; }
-    static constexpr Rank RANK_8() { return underlying::RANK_8; }
+    static constexpr Rank RANK_1() noexcept { return underlying::RANK_1; }
+    static constexpr Rank RANK_2() noexcept { return underlying::RANK_2; }
+    static constexpr Rank RANK_3() noexcept { return underlying::RANK_3; }
+    static constexpr Rank RANK_4() noexcept { return underlying::RANK_4; }
+    static constexpr Rank RANK_5() noexcept { return underlying::RANK_5; }
+    static constexpr Rank RANK_6() noexcept { return underlying::RANK_6; }
+    static constexpr Rank RANK_7() noexcept { return underlying::RANK_7; }
+    static constexpr Rank RANK_8() noexcept { return underlying::RANK_8; }
 
     constexpr BitBoard to_bb() { return RANK_1_BB << (8 * to_underlying()); }
     constexpr          operator BitBoard() { return to_bb(); }
+};
+
+class Square {
+   private:
+    enum class underlying : std::uint8_t {
+    };
 };
 
 }

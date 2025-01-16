@@ -106,6 +106,19 @@ class BitBoard {
         return ret;
     }
 
+    constexpr BitBoard& set(std::size_t index) noexcept {
+        assert(index >= 0 && index < 64);
+        bitboard_ |= 1ULL << index;
+        return *this;
+    }
+
+    constexpr BitBoard& clear(std::size_t index) noexcept {
+        assert(index >= 0 && index < 64);
+        bitboard_ &= ~(1ULL << index);
+        return *this;
+    }
+
+
    private:
     std::uint64_t bitboard_;
 };

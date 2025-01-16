@@ -69,6 +69,10 @@ class Color {
 
     constexpr auto to_underlying() const noexcept { return Utility::to_underlying(color); }
 
+    static constexpr Color from_ordinal(auto ordinal) noexcept {
+        return static_cast<underlying>(ordinal);
+    }
+
     static constexpr Color       WHITE() noexcept { return underlying::WHITE; }
     static constexpr Color       BLACK() noexcept { return underlying::BLACK; }
     static constexpr std::size_t COUNT() noexcept { return 2; }

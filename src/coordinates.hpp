@@ -126,7 +126,7 @@ class Square {
 
     underlying square;
 
-    constexpr Square(underlying sq) :
+    constexpr Square(underlying sq) noexcept :
         square{sq} {}
 
    public:
@@ -135,17 +135,26 @@ class Square {
     static_assert(std::is_same_v<decltype(Utility::to_underlying(square)), underlying_type_t>);
 
     constexpr auto to_underlying() const noexcept { return Utility::to_underlying(square); }
+    constexpr auto ordinal() const noexcept { return to_underlying(); }
 
-    constexpr Square() :
+    constexpr Square() noexcept :
         square{underlying::None} {}
 
-    constexpr Square(File f, Rank r) :
+    constexpr Square(File f, Rank r) noexcept :
         square{static_cast<underlying_type_t>(f.to_underlying() + r.to_underlying() * 8)} {}
 
-    constexpr File file() { return File::from_ordinal(to_underlying() % 8); }
-    constexpr Rank rank() { return Rank::from_ordinal(to_underlying() / 8); }
+    constexpr File     file() const noexcept { return File::from_ordinal(ordinal() % 8); }
+    constexpr Rank     rank() const noexcept { return Rank::from_ordinal(ordinal() / 8); }
+    constexpr BitBoard to_bb() const noexcept { return 1ULL << ordinal(); }
+    constexpr bool     is_valid() const noexcept { return square != underlying::None; }
 
-    static constexpr Square NONE() { return underlying::None; }
+    static constexpr Square NONE() noexcept { return underlying::None; }
+
+    static constexpr std::size_t COUNT() noexcept { return 64; }
+
+    static constexpr Square from_ordinal(auto ordinal) noexcept {
+        return static_cast<underlying>(ordinal);
+    }
 };
 
 }

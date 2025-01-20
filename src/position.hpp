@@ -14,9 +14,10 @@ namespace Volta::Chess {
 
 // Copy-Make properties of Position
 struct PositionRecord {
-    Square            en_passant;
-    std::uint_fast8_t rule50;
-    PositionRecord*   previous;
+    PositionRecord* previous;
+    Square          en_passant;
+    Piece           prior_capture;
+    std::uint8_t    rule50;
 };
 
 class Position {

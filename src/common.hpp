@@ -76,6 +76,8 @@ class Color {
     static constexpr Color       WHITE() noexcept { return underlying::WHITE; }
     static constexpr Color       BLACK() noexcept { return underlying::BLACK; }
     static constexpr std::size_t COUNT() noexcept { return 2; }
+
+    constexpr Color operator~() { return from_ordinal(!to_underlying()); }
 };
 }
 

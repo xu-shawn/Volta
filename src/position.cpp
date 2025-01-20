@@ -1,6 +1,7 @@
 #include <cstring>
 
 #include "move.hpp"
+#include "piece.hpp"
 #include "position.hpp"
 
 namespace Volta::Chess {
@@ -45,6 +46,33 @@ void Position::make_move(PositionRecord* const new_record, const Move move) noex
     {
         // unimplemented
     }
+    if (captured_piece.is_valid())
+    {
+        remove_piece(captured_piece, to);
+    }
+    else if (move.is_ep())
+    {
+        remove_piece(Piece::make(PieceType::PAWN(), ~side_to_move), record->en_passant);
+    }
+
+    remove_piece(moved_piece, from);
+    add_piece(moved_piece, to);
+
+    side_to_move = ~side_to_move;
+}
+
+void Position::undo_move(const Move move) noexcept {
+    const Square from           = move.from();
+    const Square to             = move.to();
+    const Piece  moved_piece    = piece_on(move.to());
+    Piece        captured_piece = record->prior_capture;
+
+    record = record->previous;
+
+    remove_piece(moved_piece, to);
+    add_piece(moved_piece, from);
+
+    side_to_move = ~side_to_move;
 }
 
 }

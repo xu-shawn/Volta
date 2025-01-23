@@ -157,6 +157,33 @@ class Square {
     }
 };
 
+inline auto constexpr distance(File f1, File f2) {
+    return std::abs(f1.to_underlying() - f2.to_underlying());
+}
+
+inline auto constexpr distance(Rank r1, Rank r2) {
+    return std::abs(r1.to_underlying() - r2.to_underlying());
+}
+
+inline auto constexpr distance(Square s1, Square s2) {
+    return distance(s1.file(), s2.file()) + distance(s1.rank(), s2.rank());
+}
+
+template<Direction::underlying dir>
+[[nodiscard]] constexpr Square shift(Square sq) {
+    if constexpr (dir == Direction::underlying::NORTH)
+        return Square::from_ordinal(sq.to_underlying() + 8);
+
+    if constexpr (dir == Direction::underlying::SOUTH)
+        return Square::from_ordinal(sq.to_underlying() - 8);
+
+    if constexpr (dir == Direction::underlying::EAST)
+        return Square::from_ordinal(sq.to_underlying() + 1);
+
+    if constexpr (dir == Direction::underlying::WEST)
+        return Square::from_ordinal(sq.to_underlying() - 1);
+}
+
 }
 
 #endif

@@ -12,19 +12,15 @@
 
 namespace Volta::Chess {
 
-// Copy-Make properties of Position
-struct PositionRecord {
+struct PositionState {
     Square       en_passant;
-    Piece        prior_capture;
     std::uint8_t rule50;
     Color        side_to_move;
 
     std::array<BitBoard, Color::COUNT()>     by_color;
     std::array<BitBoard, PieceType::COUNT()> by_piece_type;
     std::array<Piece, Square::COUNT()>       mailbox;
-};
 
-class Position {
    private:
     Piece piece_on(const Square square) const noexcept;
 
@@ -32,9 +28,21 @@ class Position {
     void remove_piece(const Piece piece, const Square square) noexcept;
 
    public:
-    void make_move(PositionRecord* const record, const Move move) noexcept;
-    void undo_move(const Move move) noexcept;
+    constexpr PositionState& operator=(const PositionState& other) = default;
+
+    constexpr PositionState() :
+        en_passant{},
+        rule50{},
+        side_to_move{Color::WHITE()},
+        by_color{},
+        by_piece_type{},
+        mailbox{} {};
+
+    void make_move(const Move move) noexcept;
+
+    static constexpr PositionState from_fen(std::string_view fen) noexcept;
 };
+
 }
 
 #endif

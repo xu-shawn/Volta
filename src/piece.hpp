@@ -44,6 +44,10 @@ class PieceType {
     static constexpr PieceType from_ordinal(auto ordinal) noexcept {
         return static_cast<underlying>(ordinal);
     }
+
+    constexpr bool operator==(const PieceType& other) const noexcept {
+        return piece_type == other.piece_type;
+    }
 };
 
 class Piece {
@@ -110,6 +114,8 @@ class Piece {
     constexpr PieceType type() const noexcept {
         return PieceType::from_ordinal(to_underlying() > 5 ? to_underlying() - 6 : to_underlying());
     }
+
+    constexpr bool operator==(const Piece& other) const noexcept { return piece == other.piece; }
 };
 
 }

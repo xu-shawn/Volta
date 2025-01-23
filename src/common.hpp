@@ -9,6 +9,7 @@
 namespace Volta::Chess {
 
 class BitBoard;
+class Square;
 
 class Direction {
    private:
@@ -50,6 +51,9 @@ class Direction {
 
     template<Direction::underlying dir>
     friend constexpr BitBoard shift(BitBoard bb);
+
+    template<Direction::underlying dir>
+    friend constexpr Square shift(Square sq);
 };
 
 class Color {
@@ -78,6 +82,7 @@ class Color {
     static constexpr std::size_t COUNT() noexcept { return 2; }
 
     constexpr Color operator~() { return from_ordinal(!to_underlying()); }
+    constexpr bool  operator==(const Color& other) const noexcept { return color == other.color; }
 };
 }
 

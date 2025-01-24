@@ -55,8 +55,6 @@ consteval std::array<BitBoard, Square::COUNT()> generate_knight_attacks() {
     return attacks;
 }
 
-static constexpr BitBoard EdgeBB = 0xff818181818181ffULL;
-
 consteval std::array<BitBoard, Square::COUNT()> generate_bishop_masks() {
     std::array<BitBoard, Square::COUNT()> attacks{};
 
@@ -163,6 +161,94 @@ consteval std::array<BitBoard, Square::COUNT()> generate_rook_masks() {
     return attacks;
 }
 
+constexpr BitBoard generate_bishop_attacks(Square sq, BitBoard occ) {
+    BitBoard sq_bb   = sq.to_bb();
+    BitBoard attacks = 0;
+
+    while (sq_bb)
+    {
+        attacks |= sq_bb;
+        if (occ & sq_bb)
+            break;
+        sq_bb = shift<Direction::NORTH_WEST()>(sq_bb);
+    }
+
+    sq_bb = sq.to_bb();
+    while (sq_bb)
+    {
+        attacks |= sq_bb;
+        if (occ & sq_bb)
+            break;
+        sq_bb = shift<Direction::NORTH_EAST()>(sq_bb);
+    }
+
+    sq_bb = sq.to_bb();
+    while (sq_bb)
+    {
+        attacks |= sq_bb;
+        if (occ & sq_bb)
+            break;
+        sq_bb = shift<Direction::SOUTH_WEST()>(sq_bb);
+    }
+
+    sq_bb = sq.to_bb();
+    while (sq_bb)
+    {
+        attacks |= sq_bb;
+        if (occ & sq_bb)
+            break;
+        sq_bb = shift<Direction::SOUTH_EAST()>(sq_bb);
+    }
+
+    attacks &= (~sq.to_bb());
+
+    return attacks;
+}
+
+constexpr BitBoard generate_rook_attacks(Square sq, BitBoard occ) {
+    BitBoard sq_bb   = sq.to_bb();
+    BitBoard attacks = 0;
+
+    while (sq_bb)
+    {
+        attacks |= sq_bb;
+        if (occ & sq_bb)
+            break;
+        sq_bb = shift<Direction::NORTH()>(sq_bb);
+    }
+
+    sq_bb = sq.to_bb();
+    while (sq_bb)
+    {
+        attacks |= sq_bb;
+        if (occ & sq_bb)
+            break;
+        sq_bb = shift<Direction::SOUTH()>(sq_bb);
+    }
+
+    sq_bb = sq.to_bb();
+    while (sq_bb)
+    {
+        attacks |= sq_bb;
+        if (occ & sq_bb)
+            break;
+        sq_bb = shift<Direction::WEST()>(sq_bb);
+    }
+
+    sq_bb = sq.to_bb();
+    while (sq_bb)
+    {
+        attacks |= sq_bb;
+        if (occ & sq_bb)
+            break;
+        sq_bb = shift<Direction::EAST()>(sq_bb);
+    }
+
+    attacks &= (~sq.to_bb());
+
+    return attacks;
+}
+
 struct MagicEntry {
     BitBoard      mask;
     std::uint64_t magic;
@@ -181,7 +267,7 @@ class Attacks {
 
     static constexpr std::array<BitBoard, Square::COUNT()> BishopMasks =
       Detail::generate_bishop_masks();
-    static constexpr std::array<Detail::MagicEntry, Square::COUNT()> BishopMagics{};
+    static std::array<Detail::MagicEntry, Square::COUNT()> BishopMagics;
 
     static constexpr std::array<BitBoard, Square::COUNT()> RookMasks =
       Detail::generate_rook_masks();
@@ -191,7 +277,11 @@ class Attacks {
 
     static constexpr BitBoard knight_attacks(Square sq) { return KnightAttacks[sq.ordinal()]; }
 
+    static constexpr BitBoard bishop_mask(Square sq) { return BishopMasks[sq.ordinal()]; }
+
     static constexpr BitBoard bishop_attacks(Square sq) { return 0; }
+
+    static constexpr BitBoard rook_mask(Square sq) { return RookMasks[sq.ordinal()]; }
 };
 
 }

@@ -39,6 +39,18 @@ class BitBoard {
 
     [[nodiscard]] constexpr bool empty() const noexcept { return bitboard_ == 0ULL; }
 
+    [[nodiscard]] constexpr BitBoard operator-(const std::int64_t amount) const noexcept {
+        return BitBoard(bitboard_ - amount);
+    }
+
+    [[nodiscard]] constexpr BitBoard operator-(const BitBoard& other) const noexcept {
+        return BitBoard(bitboard_ - other.bitboard_);
+    }
+
+    [[nodiscard]] constexpr BitBoard operator*(const BitBoard& other) const noexcept {
+        return BitBoard(bitboard_ * other.bitboard_);
+    }
+
     [[nodiscard]] constexpr BitBoard operator~() const noexcept { return BitBoard(~bitboard_); }
 
     [[nodiscard]] constexpr BitBoard operator|(const BitBoard& other) const noexcept {

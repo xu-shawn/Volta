@@ -57,21 +57,16 @@ class Direction {
 };
 
 class Color {
-   private:
+   public:
     enum class underlying : std::uint8_t {
         WHITE,
         BLACK
     };
 
-    constexpr Color(underlying c) :
-        color{c} {}
-
-    underlying color;
-
-   public:
     using underlying_type_t = std::underlying_type_t<underlying>;
 
     constexpr auto to_underlying() const noexcept { return Utility::to_underlying(color); }
+    constexpr      operator underlying() const noexcept { return color; }
 
     static constexpr Color from_ordinal(auto ordinal) noexcept {
         return static_cast<underlying>(ordinal);
@@ -83,7 +78,16 @@ class Color {
 
     constexpr Color operator~() { return from_ordinal(!to_underlying()); }
     constexpr bool  operator==(const Color& other) const noexcept { return color == other.color; }
+    constexpr bool  operator==(const underlying& other) const noexcept { return color == other; }
+
+    constexpr Color(underlying c) :
+        color{c} {}
+
+   private:
+    underlying color;
 };
+
+
 }
 
 #endif

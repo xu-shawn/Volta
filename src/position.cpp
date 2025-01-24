@@ -1,10 +1,15 @@
 #include <cstring>
+#include <string_view>
+#include <ranges>
+#include <vector>
+#include <iostream>
 
 #include "common.hpp"
 #include "coordinates.hpp"
 #include "move.hpp"
 #include "piece.hpp"
 #include "position.hpp"
+#include "utility.hpp"
 
 namespace Volta::Chess {
 
@@ -82,10 +87,6 @@ void PositionState::make_move(const Move move) noexcept {
     en_passant = Square::NONE();
 
     side_to_move = ~side_to_move;
-}
-
-constexpr PositionState PositionState::from_fen(std::string_view fen) noexcept {
-    PositionState ret{};
 }
 
 }

@@ -1,6 +1,7 @@
 #ifndef VOLTA_PIECE_HPP__
 #define VOLTA_PIECE_HPP__
 
+#include <cassert>
 #include <cstdint>
 
 #include "common.hpp"
@@ -38,6 +39,7 @@ class PieceType {
     static constexpr PieceType   BISHOP() noexcept { return underlying::BISHOP; }
     static constexpr PieceType   ROOK() noexcept { return underlying::ROOK; }
     static constexpr PieceType   QUEEN() noexcept { return underlying::QUEEN; }
+    static constexpr PieceType   KING() noexcept { return underlying::KING; }
     static constexpr PieceType   NONE() noexcept { return underlying::NONE; }
     static constexpr std::size_t COUNT() noexcept { return 6; }
 
@@ -92,17 +94,51 @@ class Piece {
         return static_cast<underlying>(ordinal);
     }
 
+    static constexpr Piece from_char(char ch) noexcept {
+        switch (ch)
+        {
+        case 'p' :
+            return Piece::WHITE_PAWN();
+        case 'n' :
+            return Piece::WHITE_KNIGHT();
+        case 'b' :
+            return Piece::WHITE_BISHOP();
+        case 'r' :
+            return Piece::WHITE_ROOK();
+        case 'q' :
+            return Piece::WHITE_QUEEN();
+        case 'k' :
+            return Piece::WHITE_KING();
+        case 'P' :
+            return Piece::BLACK_PAWN();
+        case 'N' :
+            return Piece::BLACK_KNIGHT();
+        case 'B' :
+            return Piece::BLACK_BISHOP();
+        case 'R' :
+            return Piece::BLACK_ROOK();
+        case 'Q' :
+            return Piece::BLACK_QUEEN();
+        case 'K' :
+            return Piece::BLACK_KING();
+        }
+
+        return Piece::NONE();
+    }
+
     static constexpr Piece WHITE_PAWN() noexcept { return underlying::WHITE_PAWN; }
     static constexpr Piece WHITE_KNIGHT() noexcept { return underlying::WHITE_KNIGHT; }
     static constexpr Piece WHITE_BISHOP() noexcept { return underlying::WHITE_BISHOP; }
     static constexpr Piece WHITE_ROOK() noexcept { return underlying::WHITE_ROOK; }
     static constexpr Piece WHITE_QUEEN() noexcept { return underlying::WHITE_QUEEN; }
+    static constexpr Piece WHITE_KING() noexcept { return underlying::WHITE_KING; }
 
     static constexpr Piece BLACK_PAWN() noexcept { return underlying::BLACK_PAWN; }
     static constexpr Piece BLACK_KNIGHT() noexcept { return underlying::BLACK_KNIGHT; }
     static constexpr Piece BLACK_BISHOP() noexcept { return underlying::BLACK_BISHOP; }
     static constexpr Piece BLACK_ROOK() noexcept { return underlying::BLACK_ROOK; }
     static constexpr Piece BLACK_QUEEN() noexcept { return underlying::BLACK_QUEEN; }
+    static constexpr Piece BLACK_KING() noexcept { return underlying::BLACK_KING; }
 
     static constexpr Piece       NONE() noexcept { return underlying::NONE; }
     static constexpr std::size_t COUNT() noexcept { return 6; }

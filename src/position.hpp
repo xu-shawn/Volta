@@ -2,7 +2,9 @@
 #define VOLTA_POSITION_HPP__
 
 #include <array>
+#include <cctype>
 #include <cstdint>
+#include <iostream>
 
 #include "bitboard.hpp"
 #include "common.hpp"
@@ -40,7 +42,33 @@ struct PositionState {
 
     void make_move(const Move move) noexcept;
 
-    static constexpr PositionState from_fen(std::string_view fen) noexcept;
+    static constexpr PositionState from_fen(std::string_view fen) noexcept {
+        PositionState ret{};
+
+        constexpr std::string_view    delim  = " ";
+        std::vector<std::string_view> slices = Utility::split(fen, ' ');
+
+        assert(slices.size() == 6);
+
+        std::size_t curr_sq = 0;
+
+        for (const char ch : slices[0])
+        {
+            if (ch == '/')
+                continue;
+
+            if (std::isdigit(ch))
+            {
+                curr_sq += ch - '0';
+                continue;
+            }
+
+            ret.add_piece(Piece::from_char(ch), Square::from_ordinal(curr_sq));
+            curr_sq++;
+        }
+
+        return ret;
+    }
 };
 
 }

@@ -3,6 +3,7 @@
 
 #include <array>
 
+#include "bbmanip.hpp"
 #include "bitboard.hpp"
 #include "common.hpp"
 #include "coordinates.hpp"
@@ -11,17 +12,186 @@ namespace Volta::Chess {
 
 namespace Detail {
 
-constexpr std::array<BitBoard, Square::COUNT()> generate_king_attacks() {
-    std::array<BitBoard, Square::COUNT()>;
+consteval std::array<BitBoard, Square::COUNT()> generate_king_attacks() {
+    std::array<BitBoard, Square::COUNT()> attacks{};
+
     for (std::size_t sq = 0; sq < Square::COUNT(); sq++)
-    {}
+    {
+        const auto sq_bb = Square::from_ordinal(sq).to_bb();
+
+        attacks[sq] |= shift<Direction::NORTH()>(sq_bb);
+        attacks[sq] |= shift<Direction::SOUTH()>(sq_bb);
+        attacks[sq] |= shift<Direction::EAST()>(sq_bb);
+        attacks[sq] |= shift<Direction::WEST()>(sq_bb);
+        attacks[sq] |= shift<Direction::NORTH_EAST()>(sq_bb);
+        attacks[sq] |= shift<Direction::NORTH_WEST()>(sq_bb);
+        attacks[sq] |= shift<Direction::SOUTH_EAST()>(sq_bb);
+        attacks[sq] |= shift<Direction::SOUTH_WEST()>(sq_bb);
+    }
+
+    return attacks;
 }
+
+consteval std::array<BitBoard, Square::COUNT()> generate_knight_attacks() {
+    std::array<BitBoard, Square::COUNT()> attacks{};
+
+    for (std::size_t sq = 0; sq < Square::COUNT(); sq++)
+    {
+        const auto sq_bb = Square::from_ordinal(sq).to_bb();
+
+        attacks[sq] |= shift<Direction::NORTH_EAST()>(shift<Direction::NORTH()>(sq_bb));
+        attacks[sq] |= shift<Direction::NORTH_WEST()>(shift<Direction::NORTH()>(sq_bb));
+
+        attacks[sq] |= shift<Direction::SOUTH_EAST()>(shift<Direction::SOUTH()>(sq_bb));
+        attacks[sq] |= shift<Direction::SOUTH_WEST()>(shift<Direction::SOUTH()>(sq_bb));
+
+        attacks[sq] |= shift<Direction::NORTH_WEST()>(shift<Direction::WEST()>(sq_bb));
+        attacks[sq] |= shift<Direction::SOUTH_WEST()>(shift<Direction::WEST()>(sq_bb));
+
+        attacks[sq] |= shift<Direction::NORTH_EAST()>(shift<Direction::EAST()>(sq_bb));
+        attacks[sq] |= shift<Direction::SOUTH_EAST()>(shift<Direction::EAST()>(sq_bb));
+    }
+
+    return attacks;
+}
+
+static constexpr BitBoard EdgeBB = 0xff818181818181ffULL;
+
+consteval std::array<BitBoard, Square::COUNT()> generate_bishop_masks() {
+    std::array<BitBoard, Square::COUNT()> attacks{};
+
+    for (std::size_t sq_idx = 0; sq_idx < Square::COUNT(); sq_idx++)
+    {
+        const Square sq    = Square::from_ordinal(sq_idx);
+        BitBoard     sq_bb = sq.to_bb();
+
+        while (sq_bb)
+        {
+            if (shift<Direction::NORTH_WEST()>(sq_bb) == 0)
+                break;
+
+            attacks[sq_idx] |= sq_bb;
+            sq_bb = shift<Direction::NORTH_WEST()>(sq_bb);
+        }
+
+        sq_bb = sq.to_bb();
+        while (sq_bb)
+        {
+            if (shift<Direction::NORTH_EAST()>(sq_bb) == 0)
+                break;
+
+            attacks[sq_idx] |= sq_bb;
+            sq_bb = shift<Direction::NORTH_EAST()>(sq_bb);
+        }
+
+        sq_bb = sq.to_bb();
+        while (sq_bb)
+        {
+            if (shift<Direction::SOUTH_WEST()>(sq_bb) == 0)
+                break;
+
+            attacks[sq_idx] |= sq_bb;
+            sq_bb = shift<Direction::SOUTH_WEST()>(sq_bb);
+        }
+
+        sq_bb = sq.to_bb();
+        while (sq_bb)
+        {
+            if (shift<Direction::SOUTH_EAST()>(sq_bb) == 0)
+                break;
+
+            attacks[sq_idx] |= sq_bb;
+            sq_bb = shift<Direction::SOUTH_EAST()>(sq_bb);
+        }
+
+        attacks[sq_idx] &= (~sq.to_bb());
+    }
+
+    return attacks;
+}
+
+consteval std::array<BitBoard, Square::COUNT()> generate_rook_masks() {
+    std::array<BitBoard, Square::COUNT()> attacks{};
+
+    for (std::size_t sq_idx = 0; sq_idx < Square::COUNT(); sq_idx++)
+    {
+        const Square sq    = Square::from_ordinal(sq_idx);
+        BitBoard     sq_bb = sq.to_bb();
+
+        while (sq_bb)
+        {
+            if (shift<Direction::NORTH()>(sq_bb) == 0)
+                break;
+
+            attacks[sq_idx] |= sq_bb;
+            sq_bb = shift<Direction::NORTH()>(sq_bb);
+        }
+
+        sq_bb = sq.to_bb();
+        while (sq_bb)
+        {
+            if (shift<Direction::SOUTH()>(sq_bb) == 0)
+                break;
+
+            attacks[sq_idx] |= sq_bb;
+            sq_bb = shift<Direction::SOUTH()>(sq_bb);
+        }
+
+        sq_bb = sq.to_bb();
+        while (sq_bb)
+        {
+            if (shift<Direction::WEST()>(sq_bb) == 0)
+                break;
+
+            attacks[sq_idx] |= sq_bb;
+            sq_bb = shift<Direction::WEST()>(sq_bb);
+        }
+
+        sq_bb = sq.to_bb();
+        while (sq_bb)
+        {
+            if (shift<Direction::EAST()>(sq_bb) == 0)
+                break;
+
+            attacks[sq_idx] |= sq_bb;
+            sq_bb = shift<Direction::EAST()>(sq_bb);
+        }
+
+        attacks[sq_idx] &= (~sq.to_bb());
+    }
+
+    return attacks;
+}
+
+struct MagicEntry {
+    BitBoard      mask;
+    std::uint64_t magic;
+    std::uint8_t  shift;
+};
 
 }
 
-struct Attacks {
-    static constexpr std::array<BitBoard, Square::COUNT()> KingAttacks{};
-    static constexpr std::array<BitBoard, Square::COUNT()> KnightAttacks{};
+class Attacks {
+    // private:
+   public:
+    static constexpr std::array<BitBoard, Square::COUNT()> KingAttacks =
+      Detail::generate_king_attacks();
+    static constexpr std::array<BitBoard, Square::COUNT()> KnightAttacks =
+      Detail::generate_knight_attacks();
+
+    static constexpr std::array<BitBoard, Square::COUNT()> BishopMasks =
+      Detail::generate_bishop_masks();
+    static constexpr std::array<Detail::MagicEntry, Square::COUNT()> BishopMagics{};
+
+    static constexpr std::array<BitBoard, Square::COUNT()> RookMasks =
+      Detail::generate_rook_masks();
+
+   public:
+    static constexpr BitBoard king_attacks(Square sq) { return KingAttacks[sq.ordinal()]; }
+
+    static constexpr BitBoard knight_attacks(Square sq) { return KnightAttacks[sq.ordinal()]; }
+
+    static constexpr BitBoard bishop_attacks(Square sq) { return 0; }
 };
 
 }

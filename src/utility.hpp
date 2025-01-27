@@ -37,17 +37,18 @@ class PRNG {
     std::uint64_t s;
 
    public:
-    PRNG(std::uint64_t seed) :
+    constexpr PRNG(std::uint64_t seed) :
         s(seed) {
-        assert(seed);
+        if (s == 0)
+            s = 1;
     }
 
-    std::uint64_t rand() {
+    constexpr std::uint64_t rand() {
         s ^= s >> 12, s ^= s << 25, s ^= s >> 27;
         return s * 2685821657736338717LL;
     }
 
-    std::uint64_t sparse_rand() { return rand() & rand() & rand(); }
+    constexpr std::uint64_t sparse_rand() { return rand() & rand() & rand(); }
 };
 
 }

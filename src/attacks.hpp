@@ -258,8 +258,7 @@ struct MagicEntry {
 }
 
 class Attacks {
-    // private:
-   public:
+   private:
     static constexpr std::array<BitBoard, Square::COUNT()> KingAttacks =
       Detail::generate_king_attacks();
     static constexpr std::array<BitBoard, Square::COUNT()> KnightAttacks =

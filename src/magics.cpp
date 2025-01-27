@@ -40,14 +40,14 @@ constexpr std::vector<BitBoard> attacks_under_blockers(const Square             
     return attacks;
 }
 
-bool test_magic(const std::uint64_t          magic,
-                const std::uint8_t           shift,
-                const std::vector<BitBoard>& blockers,
-                const std::vector<BitBoard>& attacks,
-                std::vector<std::size_t>&    generation,
-                std::vector<BitBoard>&       map,
-                const std::size_t            curr_generation,
-                const Square                 sq) {
+constexpr bool test_magic(const std::uint64_t          magic,
+                          const std::uint8_t           shift,
+                          const std::vector<BitBoard>& blockers,
+                          const std::vector<BitBoard>& attacks,
+                          std::vector<std::size_t>&    generation,
+                          std::vector<BitBoard>&       map,
+                          const std::size_t            curr_generation,
+                          const Square                 sq) {
     for (std::size_t i = 0; i < blockers.size(); i++)
     {
         const std::size_t idx = (magic * std::uint64_t(blockers[i])) >> shift;
@@ -63,7 +63,7 @@ bool test_magic(const std::uint64_t          magic,
 }
 
 template<typename F1, typename F2>
-Detail::MagicEntry find_magic(const Square sq, F1&& mask_fn, F2&& attacks_fn) {
+constexpr Detail::MagicEntry find_magic(const Square sq, F1&& mask_fn, F2&& attacks_fn) {
     Utility::PRNG rng{10000};
 
     const BitBoard     mask  = std::forward<F1>(mask_fn)(sq);
@@ -87,11 +87,11 @@ Detail::MagicEntry find_magic(const Square sq, F1&& mask_fn, F2&& attacks_fn) {
 
 }
 
-Detail::MagicEntry find_bishop_magic(const Square sq) {
+constexpr Detail::MagicEntry find_bishop_magic(const Square sq) {
     return find_magic(sq, Attacks::bishop_mask, Detail::generate_bishop_attacks);
 }
 
-Detail::MagicEntry find_rook_magic(const Square sq) {
+constexpr Detail::MagicEntry find_rook_magic(const Square sq) {
     return find_magic(sq, Attacks::rook_mask, Detail::generate_rook_attacks);
 }
 

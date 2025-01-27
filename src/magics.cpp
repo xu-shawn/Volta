@@ -87,11 +87,11 @@ constexpr Detail::MagicEntry find_magic(const Square sq, F1&& mask_fn, F2&& atta
 
 }
 
-constexpr Detail::MagicEntry find_bishop_magic(const Square sq) {
+Detail::MagicEntry find_bishop_magic(const Square sq) {
     return find_magic(sq, Attacks::bishop_mask, Detail::generate_bishop_attacks);
 }
 
-constexpr Detail::MagicEntry find_rook_magic(const Square sq) {
+Detail::MagicEntry find_rook_magic(const Square sq) {
     return find_magic(sq, Attacks::rook_mask, Detail::generate_rook_attacks);
 }
 

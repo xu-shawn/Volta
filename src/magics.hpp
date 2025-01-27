@@ -6,8 +6,8 @@
 
 namespace Volta::Chess {
 
-constexpr Detail::MagicEntry find_bishop_magic(const Square sq);
-constexpr Detail::MagicEntry find_rook_magic(const Square sq);
+Detail::MagicEntry find_bishop_magic(const Square sq);
+Detail::MagicEntry find_rook_magic(const Square sq);
 
 }
 

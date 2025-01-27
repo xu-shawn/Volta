@@ -4,6 +4,7 @@
 #include <limits>
 #include <vector>
 
+#include "bitboard.hpp"
 #include "magics.hpp"
 #include "attacks.hpp"
 #include "common.hpp"
@@ -26,24 +27,15 @@ constexpr std::vector<BitBoard> blocker_configurations(BitBoard mask) {
     return configurations;
 }
 
-constexpr std::vector<BitBoard>
-bishop_attacks_under_blockers(Square sq, const std::vector<BitBoard>& blockers) {
+template<typename Function>
+constexpr std::vector<BitBoard> attacks_under_blockers(const Square                 sq,
+                                                       const std::vector<BitBoard>& blockers,
+                                                       Function&&                   attacks_fn) {
     std::vector<BitBoard> attacks;
     attacks.reserve(blockers.size());
 
     for (const auto blocker : blockers)
-        attacks.push_back(Detail::generate_bishop_attacks(sq, blocker));
-
-    return attacks;
-}
-
-constexpr std::vector<BitBoard> rook_attacks_under_blockers(Square                       sq,
-                                                            const std::vector<BitBoard>& blockers) {
-    std::vector<BitBoard> attacks;
-    attacks.reserve(blockers.size());
-
-    for (const auto blocker : blockers)
-        attacks.push_back(Detail::generate_rook_attacks(sq, blocker));
+        attacks.push_back(std::forward<Function>(attacks_fn)(sq, blocker));
 
     return attacks;
 }
@@ -58,7 +50,7 @@ bool test_magic(const std::uint64_t          magic,
                 const Square                 sq) {
     for (std::size_t i = 0; i < blockers.size(); i++)
     {
-        std::size_t idx = (magic * std::uint64_t(blockers[i])) >> shift;
+        const std::size_t idx = (magic * std::uint64_t(blockers[i])) >> shift;
 
         if (generation[idx] == curr_generation && map[idx] != 0ULL && map[idx] != attacks[i])
             return false;
@@ -70,16 +62,15 @@ bool test_magic(const std::uint64_t          magic,
     return true;
 }
 
-}
-
-Detail::MagicEntry find_bishop_magic(Square sq) {
+template<typename F1, typename F2>
+Detail::MagicEntry find_magic(const Square sq, F1&& mask_fn, F2&& attacks_fn) {
     Utility::PRNG rng{10000};
 
-    const BitBoard     mask  = Attacks::bishop_mask(sq);
+    const BitBoard     mask  = std::forward<F1>(mask_fn)(sq);
     const std::uint8_t shift = Square::COUNT() - mask.popcount();
 
     const std::vector<BitBoard> blockers = blocker_configurations(mask);
-    const std::vector<BitBoard> attacks  = bishop_attacks_under_blockers(sq, blockers);
+    const std::vector<BitBoard> attacks  = attacks_under_blockers(sq, blockers, attacks_fn);
     std::vector<std::size_t>    generation(blockers.size(), 0ULL);
     std::vector<BitBoard>       map(blockers.size(), 0ULL);
 
@@ -94,25 +85,14 @@ Detail::MagicEntry find_bishop_magic(Square sq) {
     }
 }
 
-Detail::MagicEntry find_rook_magic(Square sq) {
-    Utility::PRNG rng{10000};
-
-    const BitBoard     mask  = Attacks::rook_mask(sq);
-    const std::uint8_t shift = Square::COUNT() - mask.popcount();
-
-    const std::vector<BitBoard> blockers = blocker_configurations(mask);
-    const std::vector<BitBoard> attacks  = rook_attacks_under_blockers(sq, blockers);
-    std::vector<std::size_t>    generation(blockers.size(), 0ULL);
-    std::vector<BitBoard>       map(blockers.size(), 0ULL);
-
-    assert(blockers.size() == attacks.size());
-
-    for (std::size_t curr_generation = 1;; curr_generation++)
-    {
-        std::uint64_t magic_candidate = rng.sparse_rand();
-        if (test_magic(magic_candidate, shift, blockers, attacks, generation, map, curr_generation,
-                       sq))
-            return {.mask = mask, .magic = magic_candidate, .shift = shift};
-    }
 }
+
+Detail::MagicEntry find_bishop_magic(const Square sq) {
+    return find_magic(sq, Attacks::bishop_mask, Detail::generate_bishop_attacks);
+}
+
+Detail::MagicEntry find_rook_magic(const Square sq) {
+    return find_magic(sq, Attacks::rook_mask, Detail::generate_rook_attacks);
+}
+
 }

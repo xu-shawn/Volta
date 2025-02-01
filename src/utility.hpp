@@ -51,6 +51,35 @@ class PRNG {
     constexpr std::uint64_t sparse_rand() { return rand() & rand() & rand(); }
 };
 
+template<typename T, std::size_t N>
+class fixed_vector {
+   private:
+    std::array<T, N> data;
+    std::size_t      size;
+
+   public:
+    constexpr fixed_vector() :
+        size{0} {}
+    constexpr void push_back(const T& ele) {
+        assert(size < N);
+        data[size] = ele;
+        size++;
+    }
+    constexpr void push_back(T&& ele) {
+        assert(size < N);
+        data[size] = std::move(ele);
+        size++;
+    }
+    constexpr T& operator[](const std::size_t idx) {
+        assert(idx < size);
+        return data[idx];
+    }
+    constexpr const T& operator[](const std::size_t idx) const {
+        assert(idx < size);
+        return data[idx];
+    }
+};
+
 }
 
 #endif

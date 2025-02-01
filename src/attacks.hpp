@@ -7,6 +7,7 @@
 #include "bitboard.hpp"
 #include "common.hpp"
 #include "coordinates.hpp"
+#include "magics.hpp"
 
 namespace Volta::Chess {
 
@@ -253,6 +254,10 @@ struct MagicEntry {
     BitBoard      mask;
     std::uint64_t magic;
     std::uint8_t  shift;
+
+    std::size_t get_index(BitBoard bb) {
+        return (static_cast<std::uint64_t>(bb & mask) * magic) >> shift;
+    }
 };
 
 }
@@ -266,10 +271,13 @@ class Attacks {
 
     static constexpr std::array<BitBoard, Square::COUNT()> BishopMasks =
       Detail::generate_bishop_masks();
-    static std::array<Detail::MagicEntry, Square::COUNT()> BishopMagics;
+    static std::array<Detail::MagicEntry, Square::COUNT()>        BishopMagics;
+    static std::array<std::array<BitBoard, 512>, Square::COUNT()> BishopAttacks;
 
     static constexpr std::array<BitBoard, Square::COUNT()> RookMasks =
       Detail::generate_rook_masks();
+    static std::array<Detail::MagicEntry, Square::COUNT()>         RookMagics;
+    static std::array<std::array<BitBoard, 4096>, Square::COUNT()> RookAttacks;
 
    public:
     static constexpr BitBoard king_attacks(Square sq) { return KingAttacks[sq.ordinal()]; }
@@ -278,9 +286,17 @@ class Attacks {
 
     static constexpr BitBoard bishop_mask(Square sq) { return BishopMasks[sq.ordinal()]; }
 
-    static constexpr BitBoard bishop_attacks(Square sq) { return 0; }
+    static constexpr BitBoard bishop_attacks(Square sq, BitBoard occ) {
+        return BishopAttacks[sq.ordinal()][BishopMagics[sq.ordinal()].get_index(occ)];
+    }
 
     static constexpr BitBoard rook_mask(Square sq) { return RookMasks[sq.ordinal()]; }
+
+    static constexpr BitBoard rook_attacks(Square sq, BitBoard occ) {
+        return RookAttacks[sq.ordinal()][RookMagics[sq.ordinal()].get_index(occ)];
+    }
+
+    static void init_magics();
 };
 
 }

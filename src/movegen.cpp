@@ -127,4 +127,5 @@ void append_king_moves(MoveList& movelist, const PositionState& pos, const Color
 }
 
 }  // namespace
+
 }

@@ -10,7 +10,6 @@ std::array<std::array<BitBoard, 512>, Square::COUNT()> Attacks::BishopAttacks{};
 std::array<Detail::MagicEntry, Square::COUNT()>         Attacks::RookMagics{};
 std::array<std::array<BitBoard, 4096>, Square::COUNT()> Attacks::RookAttacks{};
 
-
 void Attacks::init_magics() {
     for (std::size_t sq_idx = 0; sq_idx < Square::COUNT(); sq_idx++)
     {

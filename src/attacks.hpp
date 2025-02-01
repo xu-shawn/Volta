@@ -296,6 +296,10 @@ class Attacks {
         return RookAttacks[sq.ordinal()][RookMagics[sq.ordinal()].get_index(occ)];
     }
 
+    static constexpr BitBoard queen_attacks(Square sq, BitBoard occ) {
+        return bishop_attacks(sq, occ) | rook_attacks(sq, occ);
+    }
+
     static void init_magics();
 };
 

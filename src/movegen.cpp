@@ -50,11 +50,11 @@ void append_knight_moves(MoveList& movelist, const PositionState& pos, const Col
     const BitBoard us_occ   = pos.by_color[side.to_underlying()];
     const BitBoard them_occ = pos.by_color[(~side).to_underlying()];
 
-    BitBoard knight_bb = us_occ & pos.by_piece_type[PieceType::KNIGHT().to_underlying()];
+    BitBoard piece_bb = us_occ & pos.by_piece_type[PieceType::KNIGHT().to_underlying()];
 
-    while (knight_bb)
+    while (piece_bb)
     {
-        const Square   from    = Square::from_ordinal(knight_bb.pop_lsb());
+        const Square   from    = Square::from_ordinal(piece_bb.pop_lsb());
         const BitBoard attacks = Attacks::knight_attacks(from) & (~us_occ);
 
         append_moves_from_sq_to_bb(movelist, from, attacks & (~them_occ), MoveFlag::NORMAL());
@@ -62,21 +62,63 @@ void append_knight_moves(MoveList& movelist, const PositionState& pos, const Col
     }
 }
 
-void append_bishop_moves(MoveList& movelist, const PositionState& pos, const Color side) {}
+void append_bishop_moves(MoveList& movelist, const PositionState& pos, const Color side) {
+    const BitBoard us_occ   = pos.by_color[side.to_underlying()];
+    const BitBoard them_occ = pos.by_color[(~side).to_underlying()];
 
-void append_rook_moves(MoveList& movelist, const PositionState& pos, const Color side) {}
+    BitBoard piece_bb = us_occ & pos.by_piece_type[PieceType::BISHOP().to_underlying()];
 
-void append_queen_moves(MoveList& movelist, const PositionState& pos, const Color side) {}
+    while (piece_bb)
+    {
+        const Square   from    = Square::from_ordinal(piece_bb.pop_lsb());
+        const BitBoard attacks = Attacks::bishop_attacks(from, us_occ | them_occ) & (~us_occ);
+
+        append_moves_from_sq_to_bb(movelist, from, attacks & (~them_occ), MoveFlag::NORMAL());
+        append_moves_from_sq_to_bb(movelist, from, attacks & them_occ, MoveFlag::CAPTURE());
+    }
+}
+
+void append_rook_moves(MoveList& movelist, const PositionState& pos, const Color side) {
+    const BitBoard us_occ   = pos.by_color[side.to_underlying()];
+    const BitBoard them_occ = pos.by_color[(~side).to_underlying()];
+
+    BitBoard piece_bb = us_occ & pos.by_piece_type[PieceType::ROOK().to_underlying()];
+
+    while (piece_bb)
+    {
+        const Square   from    = Square::from_ordinal(piece_bb.pop_lsb());
+        const BitBoard attacks = Attacks::rook_attacks(from, us_occ | them_occ) & (~us_occ);
+
+        append_moves_from_sq_to_bb(movelist, from, attacks & (~them_occ), MoveFlag::NORMAL());
+        append_moves_from_sq_to_bb(movelist, from, attacks & them_occ, MoveFlag::CAPTURE());
+    }
+}
+
+void append_queen_moves(MoveList& movelist, const PositionState& pos, const Color side) {
+    const BitBoard us_occ   = pos.by_color[side.to_underlying()];
+    const BitBoard them_occ = pos.by_color[(~side).to_underlying()];
+
+    BitBoard piece_bb = us_occ & pos.by_piece_type[PieceType::ROOK().to_underlying()];
+
+    while (piece_bb)
+    {
+        const Square   from    = Square::from_ordinal(piece_bb.pop_lsb());
+        const BitBoard attacks = Attacks::queen_attacks(from, us_occ | them_occ) & (~us_occ);
+
+        append_moves_from_sq_to_bb(movelist, from, attacks & (~them_occ), MoveFlag::NORMAL());
+        append_moves_from_sq_to_bb(movelist, from, attacks & them_occ, MoveFlag::CAPTURE());
+    }
+}
 
 void append_king_moves(MoveList& movelist, const PositionState& pos, const Color side) {
     const BitBoard us_occ   = pos.by_color[side.to_underlying()];
     const BitBoard them_occ = pos.by_color[(~side).to_underlying()];
 
-    BitBoard king_bb = us_occ & pos.by_piece_type[PieceType::KING().to_underlying()];
+    BitBoard piece_bb = us_occ & pos.by_piece_type[PieceType::KING().to_underlying()];
 
-    while (king_bb)
+    while (piece_bb)
     {
-        const Square   from    = Square::from_ordinal(king_bb.pop_lsb());
+        const Square   from    = Square::from_ordinal(piece_bb.pop_lsb());
         const BitBoard attacks = Attacks::king_attacks(from) & (~us_occ);
 
         append_moves_from_sq_to_bb(movelist, from, attacks & (~them_occ), MoveFlag::NORMAL());

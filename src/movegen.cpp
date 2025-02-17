@@ -47,10 +47,10 @@ void append_moves_from_sq_to_bb(MoveList&      movelist,
 void append_pawn_moves(MoveList& movelist, const PositionState& pos, const Color side) {}
 
 void append_knight_moves(MoveList& movelist, const PositionState& pos, const Color side) {
-    const BitBoard us_occ   = pos.by_color[side.to_underlying()];
-    const BitBoard them_occ = pos.by_color[(~side).to_underlying()];
+    const BitBoard us_occ   = pos.bb(side);
+    const BitBoard them_occ = pos.bb(~side);
 
-    BitBoard piece_bb = us_occ & pos.by_piece_type[PieceType::KNIGHT().to_underlying()];
+    BitBoard piece_bb = us_occ & pos.bb(PieceType::KNIGHT());
 
     while (piece_bb)
     {
@@ -63,10 +63,10 @@ void append_knight_moves(MoveList& movelist, const PositionState& pos, const Col
 }
 
 void append_bishop_moves(MoveList& movelist, const PositionState& pos, const Color side) {
-    const BitBoard us_occ   = pos.by_color[side.to_underlying()];
-    const BitBoard them_occ = pos.by_color[(~side).to_underlying()];
+    const BitBoard us_occ   = pos.bb(side);
+    const BitBoard them_occ = pos.bb(~side);
 
-    BitBoard piece_bb = us_occ & pos.by_piece_type[PieceType::BISHOP().to_underlying()];
+    BitBoard piece_bb = us_occ & pos.bb(PieceType::BISHOP());
 
     while (piece_bb)
     {
@@ -79,10 +79,10 @@ void append_bishop_moves(MoveList& movelist, const PositionState& pos, const Col
 }
 
 void append_rook_moves(MoveList& movelist, const PositionState& pos, const Color side) {
-    const BitBoard us_occ   = pos.by_color[side.to_underlying()];
-    const BitBoard them_occ = pos.by_color[(~side).to_underlying()];
+    const BitBoard us_occ   = pos.bb(side);
+    const BitBoard them_occ = pos.bb(~side);
 
-    BitBoard piece_bb = us_occ & pos.by_piece_type[PieceType::ROOK().to_underlying()];
+    BitBoard piece_bb = us_occ & pos.bb(PieceType::ROOK());
 
     while (piece_bb)
     {
@@ -95,10 +95,10 @@ void append_rook_moves(MoveList& movelist, const PositionState& pos, const Color
 }
 
 void append_queen_moves(MoveList& movelist, const PositionState& pos, const Color side) {
-    const BitBoard us_occ   = pos.by_color[side.to_underlying()];
-    const BitBoard them_occ = pos.by_color[(~side).to_underlying()];
+    const BitBoard us_occ   = pos.bb(side);
+    const BitBoard them_occ = pos.bb(~side);
 
-    BitBoard piece_bb = us_occ & pos.by_piece_type[PieceType::ROOK().to_underlying()];
+    BitBoard piece_bb = us_occ & pos.bb(PieceType::QUEEN());
 
     while (piece_bb)
     {
@@ -111,10 +111,10 @@ void append_queen_moves(MoveList& movelist, const PositionState& pos, const Colo
 }
 
 void append_king_moves(MoveList& movelist, const PositionState& pos, const Color side) {
-    const BitBoard us_occ   = pos.by_color[side.to_underlying()];
-    const BitBoard them_occ = pos.by_color[(~side).to_underlying()];
+    const BitBoard us_occ   = pos.bb(side);
+    const BitBoard them_occ = pos.bb(~side);
 
-    BitBoard piece_bb = us_occ & pos.by_piece_type[PieceType::KING().to_underlying()];
+    BitBoard piece_bb = us_occ & pos.bb(PieceType::KING());
 
     while (piece_bb)
     {

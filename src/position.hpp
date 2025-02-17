@@ -15,6 +15,7 @@
 namespace Volta::Chess {
 
 struct PositionState {
+   private:
     Square       en_passant;
     std::uint8_t rule50;
     Color        side_to_move;
@@ -23,7 +24,6 @@ struct PositionState {
     std::array<BitBoard, PieceType::COUNT()> by_piece_type;
     std::array<Piece, Square::COUNT()>       mailbox;
 
-   private:
     Piece piece_on(const Square square) const noexcept;
 
     void add_piece(const Piece piece, const Square square) noexcept;
@@ -68,6 +68,11 @@ struct PositionState {
         }
 
         return ret;
+    }
+
+    constexpr BitBoard bb(const Color color) const { return by_color[color.to_underlying()]; }
+    constexpr BitBoard bb(const PieceType piece_type) const {
+        return by_piece_type[piece_type.to_underlying()];
     }
 };
 

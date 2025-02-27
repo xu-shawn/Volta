@@ -46,16 +46,24 @@ void append_moves_from_sq_to_bb(MoveList&      movelist,
 }
 
 void append_pawn_moves(MoveList& movelist, const PositionState& pos, const Color side) {
-    const BitBoard  us_occ        = pos.bb(side);
-    const BitBoard  them_occ      = pos.bb(~side);
-    const BitBoard  occ           = us_occ & them_occ;
-    const BitBoard  starting_rank = side == Color::WHITE() ? Rank::RANK_2() : Rank::RANK_7();
-    const BitBoard  pawn_bb       = pos.bb(PieceType::PAWN()) & us_occ;
+    const BitBoard us_occ   = pos.bb(side);
+    const BitBoard them_occ = pos.bb(~side);
+    const BitBoard occ      = us_occ & them_occ;
+
+    const BitBoard pawn_bb        = pos.bb(PieceType::PAWN()) & us_occ;
+    const BitBoard starting_rank  = side == Color::WHITE() ? Rank::RANK_2() : Rank::RANK_7();
+    const BitBoard starting_pawns = pawn_bb & starting_rank;
+
     const Direction push_dir = side == Color::WHITE() ? Direction::NORTH() : Direction::SOUTH();
 
-    const BitBoard starting_pawns = us_occ & starting_rank;
-
-    const BitBoard forward_push = shift(pawn_bb & occ, push_dir);
+    {
+        BitBoard forward_push = shift(pawn_bb & occ, push_dir);
+        while (forward_push)
+        {
+            const Square to = Square::from_ordinal(forward_push.pop_lsb());
+            movelist.push_back(Move(MoveFlag::NORMAL(), shift(to, push_dir.reverse()), to));
+        }
+    }
 }
 
 void append_knight_moves(MoveList& movelist, const PositionState& pos, const Color side) {

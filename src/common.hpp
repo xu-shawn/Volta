@@ -35,7 +35,7 @@ class Direction {
     static_assert(std::is_same_v<decltype(Utility::to_underlying(direction)), underlying_type_t>);
 
    public:
-    constexpr auto to_underlying() { return Utility::to_underlying(direction); }
+    constexpr auto to_underlying() const { return Utility::to_underlying(direction); }
 
     constexpr bool operator==(const Direction& other) const { return direction == other.direction; }
 
@@ -48,6 +48,8 @@ class Direction {
     static constexpr Direction NORTH_WEST() { return underlying::NORTH_WEST; }
     static constexpr Direction SOUTH_EAST() { return underlying::SOUTH_EAST; }
     static constexpr Direction SOUTH_WEST() { return underlying::SOUTH_WEST; }
+
+    constexpr Direction reverse() const { return static_cast<underlying>(to_underlying()); }
 };
 
 class Color {

@@ -3,36 +3,54 @@
 
 #include "bitboard.hpp"
 #include "coordinates.hpp"
+#include "utility.hpp"
+#include <stdexcept>
 
 namespace Volta::Chess {
 
-template<Direction::underlying dir>
-[[nodiscard]] constexpr BitBoard shift(BitBoard bb) {
-    if constexpr (dir == Direction::underlying::NORTH)
+[[nodiscard]] inline constexpr BitBoard shift(const BitBoard bb, const Direction dir) {
+    if (dir == Direction::NORTH())
         return bb << 8;
 
-    if constexpr (dir == Direction::underlying::SOUTH)
+    if (dir == Direction::SOUTH())
         return bb >> 8;
 
-    if constexpr (dir == Direction::underlying::EAST)
+    if (dir == Direction::EAST())
         return (bb & ~File::FILE_H().to_bb()) << 1;
 
-    if constexpr (dir == Direction::underlying::WEST)
+    if (dir == Direction::WEST())
         return (bb & ~File::FILE_A().to_bb()) >> 1;
 
-    if constexpr (dir == Direction::underlying::NORTH_EAST)
+    if (dir == Direction::NORTH_EAST())
         return (bb & ~File::FILE_H().to_bb()) << 9;
 
-    if constexpr (dir == Direction::underlying::SOUTH_EAST)
+    if (dir == Direction::SOUTH_EAST())
         return (bb & ~File::FILE_H().to_bb()) >> 7;
 
-    if constexpr (dir == Direction::underlying::NORTH_WEST)
+    if (dir == Direction::NORTH_WEST())
         return (bb & ~File::FILE_A().to_bb()) << 7;
 
-    if constexpr (dir == Direction::underlying::SOUTH_WEST)
+    if (dir == Direction::SOUTH_WEST())
         return (bb & ~File::FILE_A().to_bb()) >> 9;
+
+    assert(false);
 }
 
+[[nodiscard]] constexpr Square shift(const Square sq, const Direction dir) {
+    if (dir == Direction::NORTH())
+        return Square::from_ordinal(sq.to_underlying() + 8);
+
+    if (dir == Direction::SOUTH())
+        return Square::from_ordinal(sq.to_underlying() - 8);
+
+    if (dir == Direction::EAST())
+        return Square::from_ordinal(sq.to_underlying() + 1);
+
+    if (dir == Direction::WEST())
+        return Square::from_ordinal(sq.to_underlying() - 1);
+
+    assert(false);
+}
 }
 
 #endif

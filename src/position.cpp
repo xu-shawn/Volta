@@ -4,6 +4,7 @@
 #include <vector>
 #include <iostream>
 
+#include "bbmanip.hpp"
 #include "common.hpp"
 #include "coordinates.hpp"
 #include "move.hpp"
@@ -65,16 +66,16 @@ void PositionState::make_move(const Move move) noexcept {
         {
             if (move.is_ep())
             {
-                remove_piece(Piece::make(PieceType::PAWN(), ~side_to_move), en_passant);
+                remove_piece(Piece::make(PieceType::PAWN(), ~side_to_move), en_passant_destination);
                 rule50 = 0;
             }
 
             if (distance(from.rank(), to.rank()) == 2)
             {
                 if (side_to_move == Color::WHITE())
-                    en_passant = shift<Direction::SOUTH()>(to);
-                else  // if (side_to_move == Color::BLACK())
-                    en_passant = shift<Direction::NORTH()>(to);
+                    en_passant_destination = shift(to, Direction::SOUTH());
+                else
+                    en_passant_destination = shift(to, Direction::NORTH());
             }
 
             rule50 = 0;
@@ -84,7 +85,7 @@ void PositionState::make_move(const Move move) noexcept {
         add_piece(moved_piece, to);
     }
 
-    en_passant = Square::NONE();
+    en_passant_destination = Square::NONE();
 
     side_to_move = ~side_to_move;
 }

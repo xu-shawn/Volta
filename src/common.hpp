@@ -37,7 +37,7 @@ class Direction {
    public:
     constexpr auto to_underlying() { return Utility::to_underlying(direction); }
 
-    constexpr operator underlying() { return direction; }
+    constexpr bool operator==(const Direction& other) const { return direction == other.direction; }
 
     static constexpr Direction NORTH() { return underlying::NORTH; }
     static constexpr Direction SOUTH() { return underlying::SOUTH; }
@@ -48,12 +48,6 @@ class Direction {
     static constexpr Direction NORTH_WEST() { return underlying::NORTH_WEST; }
     static constexpr Direction SOUTH_EAST() { return underlying::SOUTH_EAST; }
     static constexpr Direction SOUTH_WEST() { return underlying::SOUTH_WEST; }
-
-    template<Direction::underlying dir>
-    friend constexpr BitBoard shift(BitBoard bb);
-
-    template<Direction::underlying dir>
-    friend constexpr Square shift(Square sq);
 };
 
 class Color {
@@ -66,7 +60,6 @@ class Color {
     using underlying_type_t = std::underlying_type_t<underlying>;
 
     constexpr auto to_underlying() const noexcept { return Utility::to_underlying(color); }
-    constexpr      operator underlying() const noexcept { return color; }
 
     static constexpr Color from_ordinal(auto ordinal) noexcept {
         return static_cast<underlying>(ordinal);

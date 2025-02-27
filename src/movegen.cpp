@@ -3,6 +3,7 @@
 #include "attacks.hpp"
 #include "bitboard.hpp"
 #include "move.hpp"
+#include "piece.hpp"
 
 namespace Volta::Chess {
 
@@ -44,7 +45,18 @@ void append_moves_from_sq_to_bb(MoveList&      movelist,
     }
 }
 
-void append_pawn_moves(MoveList& movelist, const PositionState& pos, const Color side) {}
+void append_pawn_moves(MoveList& movelist, const PositionState& pos, const Color side) {
+    const BitBoard  us_occ        = pos.bb(side);
+    const BitBoard  them_occ      = pos.bb(~side);
+    const BitBoard  occ           = us_occ & them_occ;
+    const BitBoard  starting_rank = side == Color::WHITE() ? Rank::RANK_2() : Rank::RANK_7();
+    const BitBoard  pawn_bb       = pos.bb(PieceType::PAWN()) & us_occ;
+    const Direction push_dir = side == Color::WHITE() ? Direction::NORTH() : Direction::SOUTH();
+
+    const BitBoard starting_pawns = us_occ & starting_rank;
+
+    const BitBoard forward_push = shift(pawn_bb & occ, push_dir);
+}
 
 void append_knight_moves(MoveList& movelist, const PositionState& pos, const Color side) {
     const BitBoard us_occ   = pos.bb(side);

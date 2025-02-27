@@ -20,14 +20,14 @@ consteval std::array<BitBoard, Square::COUNT()> generate_king_attacks() {
     {
         const auto sq_bb = Square::from_ordinal(sq).to_bb();
 
-        attacks[sq] |= shift<Direction::NORTH()>(sq_bb);
-        attacks[sq] |= shift<Direction::SOUTH()>(sq_bb);
-        attacks[sq] |= shift<Direction::EAST()>(sq_bb);
-        attacks[sq] |= shift<Direction::WEST()>(sq_bb);
-        attacks[sq] |= shift<Direction::NORTH_EAST()>(sq_bb);
-        attacks[sq] |= shift<Direction::NORTH_WEST()>(sq_bb);
-        attacks[sq] |= shift<Direction::SOUTH_EAST()>(sq_bb);
-        attacks[sq] |= shift<Direction::SOUTH_WEST()>(sq_bb);
+        attacks[sq] |= shift(sq_bb, Direction::NORTH());
+        attacks[sq] |= shift(sq_bb, Direction::SOUTH());
+        attacks[sq] |= shift(sq_bb, Direction::EAST());
+        attacks[sq] |= shift(sq_bb, Direction::WEST());
+        attacks[sq] |= shift(sq_bb, Direction::NORTH_EAST());
+        attacks[sq] |= shift(sq_bb, Direction::NORTH_WEST());
+        attacks[sq] |= shift(sq_bb, Direction::SOUTH_EAST());
+        attacks[sq] |= shift(sq_bb, Direction::SOUTH_WEST());
     }
 
     return attacks;
@@ -40,71 +40,60 @@ consteval std::array<BitBoard, Square::COUNT()> generate_knight_attacks() {
     {
         const auto sq_bb = Square::from_ordinal(sq).to_bb();
 
-        attacks[sq] |= shift<Direction::NORTH_EAST()>(shift<Direction::NORTH()>(sq_bb));
-        attacks[sq] |= shift<Direction::NORTH_WEST()>(shift<Direction::NORTH()>(sq_bb));
+        attacks[sq] |= shift(shift(sq_bb, Direction::NORTH()), Direction::NORTH_EAST());
+        attacks[sq] |= shift(shift(sq_bb, Direction::NORTH()), Direction::NORTH_WEST());
 
-        attacks[sq] |= shift<Direction::SOUTH_EAST()>(shift<Direction::SOUTH()>(sq_bb));
-        attacks[sq] |= shift<Direction::SOUTH_WEST()>(shift<Direction::SOUTH()>(sq_bb));
+        attacks[sq] |= shift(shift(sq_bb, Direction::SOUTH()), Direction::SOUTH_EAST());
+        attacks[sq] |= shift(shift(sq_bb, Direction::SOUTH()), Direction::SOUTH_WEST());
 
-        attacks[sq] |= shift<Direction::NORTH_WEST()>(shift<Direction::WEST()>(sq_bb));
-        attacks[sq] |= shift<Direction::SOUTH_WEST()>(shift<Direction::WEST()>(sq_bb));
+        attacks[sq] |= shift(shift(sq_bb, Direction::WEST()), Direction::NORTH_WEST());
+        attacks[sq] |= shift(shift(sq_bb, Direction::WEST()), Direction::SOUTH_WEST());
 
-        attacks[sq] |= shift<Direction::NORTH_EAST()>(shift<Direction::EAST()>(sq_bb));
-        attacks[sq] |= shift<Direction::SOUTH_EAST()>(shift<Direction::EAST()>(sq_bb));
+        attacks[sq] |= shift(shift(sq_bb, Direction::EAST()), Direction::NORTH_EAST());
+        attacks[sq] |= shift(shift(sq_bb, Direction::EAST()), Direction::SOUTH_EAST());
     }
 
     return attacks;
+}
+
+constexpr BitBoard generate_mask_ray(const Square start, const Direction dir) {
+    BitBoard attack{};
+    BitBoard sq_bb   = start.to_bb();
+    BitBoard next_bb = shift(sq_bb, dir);
+
+    while ((sq_bb = next_bb))
+    {
+        next_bb = shift(sq_bb, dir);
+
+        if (!next_bb)
+            break;
+
+        attack |= sq_bb;
+    }
+
+    return attack;
+}
+
+template<typename... DirectionType>
+constexpr BitBoard generate_mask_rays(const Square start, const DirectionType... dir) {
+    return (generate_mask_ray(start, dir) || ...);
+}
+
+constexpr BitBoard bishop_mask(const Square sq) {
+    return generate_mask_rays(sq, Direction::NORTH_EAST(), Direction::NORTH_WEST(),
+                              Direction::SOUTH_EAST(), Direction::SOUTH_WEST());
+}
+
+constexpr BitBoard rook_mask(const Square sq) {
+    return generate_mask_rays(sq, Direction::NORTH(), Direction::SOUTH(), Direction::EAST(),
+                              Direction::WEST());
 }
 
 consteval std::array<BitBoard, Square::COUNT()> generate_bishop_masks() {
     std::array<BitBoard, Square::COUNT()> attacks{};
 
     for (std::size_t sq_idx = 0; sq_idx < Square::COUNT(); sq_idx++)
-    {
-        const Square sq    = Square::from_ordinal(sq_idx);
-        BitBoard     sq_bb = sq.to_bb();
-
-        while (sq_bb)
-        {
-            if (shift<Direction::NORTH_WEST()>(sq_bb) == 0)
-                break;
-
-            attacks[sq_idx] |= sq_bb;
-            sq_bb = shift<Direction::NORTH_WEST()>(sq_bb);
-        }
-
-        sq_bb = sq.to_bb();
-        while (sq_bb)
-        {
-            if (shift<Direction::NORTH_EAST()>(sq_bb) == 0)
-                break;
-
-            attacks[sq_idx] |= sq_bb;
-            sq_bb = shift<Direction::NORTH_EAST()>(sq_bb);
-        }
-
-        sq_bb = sq.to_bb();
-        while (sq_bb)
-        {
-            if (shift<Direction::SOUTH_WEST()>(sq_bb) == 0)
-                break;
-
-            attacks[sq_idx] |= sq_bb;
-            sq_bb = shift<Direction::SOUTH_WEST()>(sq_bb);
-        }
-
-        sq_bb = sq.to_bb();
-        while (sq_bb)
-        {
-            if (shift<Direction::SOUTH_EAST()>(sq_bb) == 0)
-                break;
-
-            attacks[sq_idx] |= sq_bb;
-            sq_bb = shift<Direction::SOUTH_EAST()>(sq_bb);
-        }
-
-        attacks[sq_idx] &= (~sq.to_bb());
-    }
+        attacks[sq_idx] = bishop_mask(Square::from_ordinal(sq_idx));
 
     return attacks;
 }
@@ -113,141 +102,41 @@ consteval std::array<BitBoard, Square::COUNT()> generate_rook_masks() {
     std::array<BitBoard, Square::COUNT()> attacks{};
 
     for (std::size_t sq_idx = 0; sq_idx < Square::COUNT(); sq_idx++)
-    {
-        const Square sq    = Square::from_ordinal(sq_idx);
-        BitBoard     sq_bb = sq.to_bb();
-
-        while (sq_bb)
-        {
-            if (shift<Direction::NORTH()>(sq_bb) == 0)
-                break;
-
-            attacks[sq_idx] |= sq_bb;
-            sq_bb = shift<Direction::NORTH()>(sq_bb);
-        }
-
-        sq_bb = sq.to_bb();
-        while (sq_bb)
-        {
-            if (shift<Direction::SOUTH()>(sq_bb) == 0)
-                break;
-
-            attacks[sq_idx] |= sq_bb;
-            sq_bb = shift<Direction::SOUTH()>(sq_bb);
-        }
-
-        sq_bb = sq.to_bb();
-        while (sq_bb)
-        {
-            if (shift<Direction::WEST()>(sq_bb) == 0)
-                break;
-
-            attacks[sq_idx] |= sq_bb;
-            sq_bb = shift<Direction::WEST()>(sq_bb);
-        }
-
-        sq_bb = sq.to_bb();
-        while (sq_bb)
-        {
-            if (shift<Direction::EAST()>(sq_bb) == 0)
-                break;
-
-            attacks[sq_idx] |= sq_bb;
-            sq_bb = shift<Direction::EAST()>(sq_bb);
-        }
-
-        attacks[sq_idx] &= (~sq.to_bb());
-    }
+        attacks[sq_idx] = rook_mask(Square::from_ordinal(sq_idx));
 
     return attacks;
+}
+
+constexpr BitBoard
+generate_attack_ray(const BitBoard occ, const Square start, const Direction dir) {
+    BitBoard attack{};
+    BitBoard sq_bb = start.to_bb();
+
+    while ((sq_bb = shift(sq_bb, dir)))
+    {
+        attack |= sq_bb;
+
+        if (occ & sq_bb)
+            break;
+    }
+
+    return attack;
+}
+
+template<typename... DirectionType>
+constexpr BitBoard
+generate_attack_rays(const BitBoard occ, const Square start, const DirectionType... dir) {
+    return (generate_attack_ray(occ, start, dir) || ...);
 }
 
 constexpr BitBoard generate_bishop_attacks(Square sq, BitBoard occ) {
-    BitBoard sq_bb   = sq.to_bb();
-    BitBoard attacks = 0;
-
-    while (sq_bb)
-    {
-        attacks |= sq_bb;
-        if (occ & sq_bb)
-            break;
-        sq_bb = shift<Direction::NORTH_WEST()>(sq_bb);
-    }
-
-    sq_bb = sq.to_bb();
-    while (sq_bb)
-    {
-        attacks |= sq_bb;
-        if (occ & sq_bb)
-            break;
-        sq_bb = shift<Direction::NORTH_EAST()>(sq_bb);
-    }
-
-    sq_bb = sq.to_bb();
-    while (sq_bb)
-    {
-        attacks |= sq_bb;
-        if (occ & sq_bb)
-            break;
-        sq_bb = shift<Direction::SOUTH_WEST()>(sq_bb);
-    }
-
-    sq_bb = sq.to_bb();
-    while (sq_bb)
-    {
-        attacks |= sq_bb;
-        if (occ & sq_bb)
-            break;
-        sq_bb = shift<Direction::SOUTH_EAST()>(sq_bb);
-    }
-
-    attacks &= (~sq.to_bb());
-
-    return attacks;
+    return generate_attack_rays(occ, sq, Direction::NORTH_EAST(), Direction::NORTH_WEST(),
+                                Direction::SOUTH_EAST(), Direction::SOUTH_WEST());
 }
 
 constexpr BitBoard generate_rook_attacks(Square sq, BitBoard occ) {
-    BitBoard sq_bb   = sq.to_bb();
-    BitBoard attacks = 0;
-
-    while (sq_bb)
-    {
-        attacks |= sq_bb;
-        if (occ & sq_bb)
-            break;
-        sq_bb = shift<Direction::NORTH()>(sq_bb);
-    }
-
-    sq_bb = sq.to_bb();
-    while (sq_bb)
-    {
-        attacks |= sq_bb;
-        if (occ & sq_bb)
-            break;
-        sq_bb = shift<Direction::SOUTH()>(sq_bb);
-    }
-
-    sq_bb = sq.to_bb();
-    while (sq_bb)
-    {
-        attacks |= sq_bb;
-        if (occ & sq_bb)
-            break;
-        sq_bb = shift<Direction::WEST()>(sq_bb);
-    }
-
-    sq_bb = sq.to_bb();
-    while (sq_bb)
-    {
-        attacks |= sq_bb;
-        if (occ & sq_bb)
-            break;
-        sq_bb = shift<Direction::EAST()>(sq_bb);
-    }
-
-    attacks &= (~sq.to_bb());
-
-    return attacks;
+    return generate_attack_rays(occ, sq, Direction::NORTH(), Direction::SOUTH(), Direction::EAST(),
+                                Direction::WEST());
 }
 
 struct MagicEntry {
@@ -255,7 +144,7 @@ struct MagicEntry {
     std::uint64_t magic;
     std::uint8_t  shift;
 
-    std::size_t get_index(BitBoard bb) {
+    constexpr std::size_t get_index(BitBoard bb) {
         return (static_cast<std::uint64_t>(bb & mask) * magic) >> shift;
     }
 };
@@ -286,17 +175,17 @@ class Attacks {
 
     static constexpr BitBoard bishop_mask(Square sq) { return BishopMasks[sq.ordinal()]; }
 
-    static constexpr BitBoard bishop_attacks(Square sq, BitBoard occ) {
+    static BitBoard bishop_attacks(Square sq, BitBoard occ) {
         return BishopAttacks[sq.ordinal()][BishopMagics[sq.ordinal()].get_index(occ)];
     }
 
     static constexpr BitBoard rook_mask(Square sq) { return RookMasks[sq.ordinal()]; }
 
-    static constexpr BitBoard rook_attacks(Square sq, BitBoard occ) {
+    static BitBoard rook_attacks(Square sq, BitBoard occ) {
         return RookAttacks[sq.ordinal()][RookMagics[sq.ordinal()].get_index(occ)];
     }
 
-    static constexpr BitBoard queen_attacks(Square sq, BitBoard occ) {
+    static BitBoard queen_attacks(Square sq, BitBoard occ) {
         return bishop_attacks(sq, occ) | rook_attacks(sq, occ);
     }
 

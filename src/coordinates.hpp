@@ -175,21 +175,6 @@ inline auto constexpr distance(Square s1, Square s2) {
     return distance(s1.file(), s2.file()) + distance(s1.rank(), s2.rank());
 }
 
-template<Direction::underlying dir>
-[[nodiscard]] constexpr Square shift(Square sq) {
-    if constexpr (dir == Direction::underlying::NORTH)
-        return Square::from_ordinal(sq.to_underlying() + 8);
-
-    if constexpr (dir == Direction::underlying::SOUTH)
-        return Square::from_ordinal(sq.to_underlying() - 8);
-
-    if constexpr (dir == Direction::underlying::EAST)
-        return Square::from_ordinal(sq.to_underlying() + 1);
-
-    if constexpr (dir == Direction::underlying::WEST)
-        return Square::from_ordinal(sq.to_underlying() - 1);
-}
-
 }
 
 #endif

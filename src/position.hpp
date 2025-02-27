@@ -16,7 +16,7 @@ namespace Volta::Chess {
 
 struct PositionState {
    private:
-    Square       en_passant;
+    Square       en_passant_destination;
     std::uint8_t rule50;
     Color        side_to_move;
 
@@ -33,7 +33,7 @@ struct PositionState {
     constexpr PositionState& operator=(const PositionState& other) = default;
 
     constexpr PositionState() :
-        en_passant{},
+        en_passant_destination{},
         rule50{},
         side_to_move{Color::WHITE()},
         by_color{},

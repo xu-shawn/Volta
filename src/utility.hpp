@@ -80,6 +80,9 @@ class fixed_vector {
     }
 };
 
+template<typename T>
+struct dependent_false: std::false_type {};
+
 }
 
 #endif

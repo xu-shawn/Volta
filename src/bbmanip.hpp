@@ -36,6 +36,11 @@ namespace Volta::Chess {
     assert(false);
 }
 
+template<typename T, typename... Ts>
+[[nodiscard]] constexpr BitBoard shift(const BitBoard bb, const T dir, const Ts... dirs) {
+    return shift(shift(bb, dir), dirs...);
+}
+
 [[nodiscard]] constexpr Square shift(const Square sq, const Direction dir) {
     if (dir == Direction::NORTH())
         return Square::from_ordinal(sq.to_underlying() + 8);
@@ -51,6 +56,12 @@ namespace Volta::Chess {
 
     assert(false);
 }
+
+template<typename T, typename... Ts>
+[[nodiscard]] constexpr Square shift(const Square sq, const T dir, const Ts... dirs) {
+    return shift(shift(sq, dir), dirs...);
+}
+
 }
 
 #endif

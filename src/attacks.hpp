@@ -40,17 +40,17 @@ consteval std::array<BitBoard, Square::COUNT()> generate_knight_attacks() {
     {
         const auto sq_bb = Square::from_ordinal(sq).to_bb();
 
-        attacks[sq] |= shift(shift(sq_bb, Direction::NORTH()), Direction::NORTH_EAST());
-        attacks[sq] |= shift(shift(sq_bb, Direction::NORTH()), Direction::NORTH_WEST());
+        attacks[sq] |= shift(sq_bb, Direction::NORTH(), Direction::NORTH_EAST());
+        attacks[sq] |= shift(sq_bb, Direction::NORTH(), Direction::NORTH_WEST());
 
-        attacks[sq] |= shift(shift(sq_bb, Direction::SOUTH()), Direction::SOUTH_EAST());
-        attacks[sq] |= shift(shift(sq_bb, Direction::SOUTH()), Direction::SOUTH_WEST());
+        attacks[sq] |= shift(sq_bb, Direction::SOUTH(), Direction::SOUTH_EAST());
+        attacks[sq] |= shift(sq_bb, Direction::SOUTH(), Direction::SOUTH_WEST());
 
-        attacks[sq] |= shift(shift(sq_bb, Direction::WEST()), Direction::NORTH_WEST());
-        attacks[sq] |= shift(shift(sq_bb, Direction::WEST()), Direction::SOUTH_WEST());
+        attacks[sq] |= shift(sq_bb, Direction::WEST(), Direction::NORTH_WEST());
+        attacks[sq] |= shift(sq_bb, Direction::WEST(), Direction::SOUTH_WEST());
 
-        attacks[sq] |= shift(shift(sq_bb, Direction::EAST()), Direction::NORTH_EAST());
-        attacks[sq] |= shift(shift(sq_bb, Direction::EAST()), Direction::SOUTH_EAST());
+        attacks[sq] |= shift(sq_bb, Direction::EAST(), Direction::NORTH_EAST());
+        attacks[sq] |= shift(sq_bb, Direction::EAST(), Direction::SOUTH_EAST());
     }
 
     return attacks;

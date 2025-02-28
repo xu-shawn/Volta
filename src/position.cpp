@@ -90,4 +90,22 @@ void PositionState::make_move(const Move move) noexcept {
     side_to_move = ~side_to_move;
 }
 
+std::ostream& operator<<(std::ostream& os, const PositionState& pos) {
+    os << " +---+---+---+---+---+---+---+---+\n";
+
+    for (int rank_idx = Rank::COUNT() - 1; rank_idx >= 0; rank_idx--)
+    {
+        for (int file_idx = File::COUNT() - 1; file_idx >= 0; file_idx--)
+            os << " | "
+               << pos.piece_on(Square(File::from_ordinal(file_idx), Rank::from_ordinal(rank_idx)))
+                    .to_char();
+
+        os << " | " << (1 + rank_idx) << "\n +---+---+---+---+---+---+---+---+\n";
+    }
+
+    os << "   a   b   c   d   e   f   g   h\n";
+
+    return os;
+}
+
 }

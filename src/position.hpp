@@ -5,6 +5,7 @@
 #include <cctype>
 #include <cstdint>
 #include <iostream>
+#include <string_view>
 
 #include "bitboard.hpp"
 #include "common.hpp"
@@ -24,8 +25,6 @@ struct PositionState {
     std::array<BitBoard, PieceType::COUNT()> by_piece_type;
     std::array<Piece, Square::COUNT()>       mailbox;
 
-    Piece piece_on(const Square square) const noexcept;
-
     void add_piece(const Piece piece, const Square square) noexcept;
     void remove_piece(const Piece piece, const Square square) noexcept;
 
@@ -39,6 +38,8 @@ struct PositionState {
         by_color{},
         by_piece_type{},
         mailbox{} {};
+
+    Piece piece_on(const Square square) const noexcept;
 
     void make_move(const Move move) noexcept;
 
@@ -70,11 +71,17 @@ struct PositionState {
         return ret;
     }
 
+    static constexpr PositionState startpos() noexcept {
+        return PositionState::from_fen("rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1");
+    }
+
     constexpr BitBoard bb(const Color color) const { return by_color[color.to_underlying()]; }
     constexpr BitBoard bb(const PieceType piece_type) const {
         return by_piece_type[piece_type.to_underlying()];
     }
 };
+
+std::ostream& operator<<(std::ostream& os, const PositionState& pos);
 
 }
 

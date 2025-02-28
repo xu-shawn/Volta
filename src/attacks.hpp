@@ -63,12 +63,11 @@ constexpr BitBoard generate_mask_ray(const Square start, const Direction dir) {
 
     while ((sq_bb = next_bb))
     {
+        attack |= sq_bb;
         next_bb = shift(sq_bb, dir);
 
         if (!next_bb)
             break;
-
-        attack |= sq_bb;
     }
 
     return attack;

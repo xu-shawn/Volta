@@ -55,6 +55,8 @@ class File {
     static constexpr File FILE_G() noexcept { return underlying::FILE_G; }
     static constexpr File FILE_H() noexcept { return underlying::FILE_H; }
 
+    static constexpr std::size_t COUNT() noexcept { return 8; }
+
     constexpr BitBoard to_bb() { return FILE_A_BB << to_underlying(); }
     constexpr          operator BitBoard() { return to_bb(); }
 };
@@ -103,6 +105,8 @@ class Rank {
     static constexpr Rank RANK_6() noexcept { return underlying::RANK_6; }
     static constexpr Rank RANK_7() noexcept { return underlying::RANK_7; }
     static constexpr Rank RANK_8() noexcept { return underlying::RANK_8; }
+
+    static constexpr std::size_t COUNT() noexcept { return 8; }
 
     constexpr BitBoard to_bb() { return RANK_1_BB << (8 * to_underlying()); }
     constexpr          operator BitBoard() { return to_bb(); }

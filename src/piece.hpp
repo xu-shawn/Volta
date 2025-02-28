@@ -126,6 +126,40 @@ class Piece {
         return Piece::NONE();
     }
 
+    constexpr char to_char() const noexcept {
+        switch (piece)
+        {
+        case underlying::WHITE_PAWN :
+            return 'p';
+        case underlying::WHITE_KNIGHT :
+            return 'n';
+        case underlying::WHITE_BISHOP :
+            return 'b';
+        case underlying::WHITE_ROOK :
+            return 'r';
+        case underlying::WHITE_QUEEN :
+            return 'q';
+        case underlying::WHITE_KING :
+            return 'k';
+        case underlying::BLACK_PAWN :
+            return 'P';
+        case underlying::BLACK_KNIGHT :
+            return 'N';
+        case underlying::BLACK_BISHOP :
+            return 'B';
+        case underlying::BLACK_ROOK :
+            return 'R';
+        case underlying::BLACK_QUEEN :
+            return 'Q';
+        case underlying::BLACK_KING :
+            return 'K';
+        case underlying::NONE :
+            return ' ';
+        }
+
+        return '0';
+    }
+
     static constexpr Piece WHITE_PAWN() noexcept { return underlying::WHITE_PAWN; }
     static constexpr Piece WHITE_KNIGHT() noexcept { return underlying::WHITE_KNIGHT; }
     static constexpr Piece WHITE_BISHOP() noexcept { return underlying::WHITE_BISHOP; }
@@ -153,7 +187,6 @@ class Piece {
 
     constexpr bool operator==(const Piece& other) const noexcept { return piece == other.piece; }
 };
-
 }
 
 #endif

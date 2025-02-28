@@ -53,16 +53,38 @@ void append_pawn_moves(MoveList& movelist, const PositionState& pos, const Color
 
     const BitBoard pawn_bb        = pos.bb(PieceType::PAWN()) & us_occ;
     const BitBoard starting_rank  = side == Color::WHITE() ? Rank::RANK_2() : Rank::RANK_7();
+    const BitBoard promotion_rank = side == Color::WHITE() ? Rank::RANK_8() : Rank::RANK_1();
     const BitBoard starting_pawns = pawn_bb & starting_rank;
 
     const Direction push_dir = side == Color::WHITE() ? Direction::NORTH() : Direction::SOUTH();
 
     {
-        BitBoard forward_push = shift(pawn_bb, push_dir) & (~occ);
-        while (forward_push)
+        const BitBoard forward_push = shift(pawn_bb, push_dir) & ~occ;
+
         {
-            const Square to = Square::from_ordinal(forward_push.pop_lsb());
-            movelist.push_back(Move(MoveFlag::NORMAL(), shift(to, push_dir.reverse()), to));
+            BitBoard forward_push_normal = forward_push & ~promotion_rank;
+            while (forward_push_normal)
+            {
+                const Square to = Square::from_ordinal(forward_push_normal.pop_lsb());
+                movelist.push_back(Move(MoveFlag::NORMAL(), shift(to, push_dir.reverse()), to));
+            }
+        }
+
+        {
+            BitBoard forward_push_promotion = forward_push & promotion_rank;
+            while (forward_push_promotion)
+            {
+                const Square to = Square::from_ordinal(forward_push_promotion.pop_lsb());
+
+                movelist.push_back(Move(MoveFlag::make_promotion(PieceType::KNIGHT()),
+                                        shift(to, push_dir.reverse()), to));
+                movelist.push_back(Move(MoveFlag::make_promotion(PieceType::BISHOP()),
+                                        shift(to, push_dir.reverse()), to));
+                movelist.push_back(Move(MoveFlag::make_promotion(PieceType::ROOK()),
+                                        shift(to, push_dir.reverse()), to));
+                movelist.push_back(Move(MoveFlag::make_promotion(PieceType::QUEEN()),
+                                        shift(to, push_dir.reverse()), to));
+            }
         }
     }
 
@@ -78,24 +100,66 @@ void append_pawn_moves(MoveList& movelist, const PositionState& pos, const Color
     }
 
     {
-        BitBoard capture_west = shift(pawn_bb, push_dir, Direction::WEST())
-                              & (them_occ | pos.en_passant_destination().to_bb());
-        while (capture_west)
+        const BitBoard capture_west = shift(pawn_bb, push_dir, Direction::WEST())
+                                    & (them_occ | pos.en_passant_destination().to_bb());
+
         {
-            const Square to = Square::from_ordinal(capture_west.pop_lsb());
-            movelist.push_back(
-              Move(MoveFlag::CAPTURE(), shift(to, push_dir.reverse(), Direction::EAST()), to));
+            BitBoard capture_west_normal = capture_west & ~promotion_rank;
+            while (capture_west_normal)
+            {
+                const Square to = Square::from_ordinal(capture_west_normal.pop_lsb());
+                movelist.push_back(
+                  Move(MoveFlag::CAPTURE(), shift(to, push_dir.reverse(), Direction::EAST()), to));
+            }
+        }
+
+        {
+            BitBoard capture_west_promotion = capture_west & promotion_rank;
+            while (capture_west_promotion)
+            {
+                const Square to = Square::from_ordinal(capture_west_promotion.pop_lsb());
+
+                movelist.push_back(Move(MoveFlag::make_promotion(PieceType::KNIGHT()),
+                                        shift(to, push_dir.reverse(), Direction::EAST()), to));
+                movelist.push_back(Move(MoveFlag::make_promotion(PieceType::BISHOP()),
+                                        shift(to, push_dir.reverse(), Direction::EAST()), to));
+                movelist.push_back(Move(MoveFlag::make_promotion(PieceType::ROOK()),
+                                        shift(to, push_dir.reverse(), Direction::EAST()), to));
+                movelist.push_back(Move(MoveFlag::make_promotion(PieceType::QUEEN()),
+                                        shift(to, push_dir.reverse(), Direction::EAST()), to));
+            }
         }
     }
 
     {
-        BitBoard capture_east = shift(pawn_bb, push_dir, Direction::EAST())
-                              & (them_occ | pos.en_passant_destination().to_bb());
-        while (capture_east)
+        const BitBoard capture_east = shift(pawn_bb, push_dir, Direction::EAST())
+                                    & (them_occ | pos.en_passant_destination().to_bb());
+
         {
-            const Square to = Square::from_ordinal(capture_east.pop_lsb());
-            movelist.push_back(
-              Move(MoveFlag::CAPTURE(), shift(to, push_dir.reverse(), Direction::WEST()), to));
+            BitBoard capture_east_normal = capture_east & ~promotion_rank;
+            while (capture_east_normal)
+            {
+                const Square to = Square::from_ordinal(capture_east_normal.pop_lsb());
+                movelist.push_back(
+                  Move(MoveFlag::CAPTURE(), shift(to, push_dir.reverse(), Direction::WEST()), to));
+            }
+        }
+
+        {
+            BitBoard capture_east_promotion = capture_east & promotion_rank;
+            while (capture_east_promotion)
+            {
+                const Square to = Square::from_ordinal(capture_east_promotion.pop_lsb());
+
+                movelist.push_back(Move(MoveFlag::make_promotion(PieceType::KNIGHT()),
+                                        shift(to, push_dir.reverse(), Direction::WEST()), to));
+                movelist.push_back(Move(MoveFlag::make_promotion(PieceType::BISHOP()),
+                                        shift(to, push_dir.reverse(), Direction::WEST()), to));
+                movelist.push_back(Move(MoveFlag::make_promotion(PieceType::ROOK()),
+                                        shift(to, push_dir.reverse(), Direction::WEST()), to));
+                movelist.push_back(Move(MoveFlag::make_promotion(PieceType::QUEEN()),
+                                        shift(to, push_dir.reverse(), Direction::WEST()), to));
+            }
         }
     }
 }

@@ -10,7 +10,6 @@
 
 namespace Volta::Chess {
 
-
 class MoveFlag {
    private:
     enum class underlying : std::uint8_t {
@@ -38,7 +37,7 @@ class MoveFlag {
    public:
     using underlying_type_t = std::underlying_type_t<underlying>;
 
-    constexpr auto to_underlying() { return Utility::to_underlying(move_flag); }
+    constexpr auto to_underlying() const { return Utility::to_underlying(move_flag); }
 
     static constexpr MoveFlag NORMAL() noexcept { return underlying::NORMAL; }
     static constexpr MoveFlag CAPTURE() noexcept { return underlying::CAPTURE; }
@@ -60,6 +59,10 @@ class MoveFlag {
     }
     static constexpr MoveFlag QUEEN_PROMOTION_CAPTURE() noexcept {
         return underlying::QUEEN_PROMOTION_CAPTURE;
+    }
+
+    static constexpr MoveFlag make_promotion(const PieceType pt) noexcept {
+        return from_ordinal(PROMOTION().to_underlying() & (pt.to_underlying() - 1));
     }
 
     constexpr bool is_normal() const noexcept {
@@ -90,6 +93,10 @@ class MoveFlag {
 
     static constexpr MoveFlag from_ordinal(auto ordinal) noexcept {
         return static_cast<underlying>(ordinal);
+    }
+
+    constexpr MoveFlag operator|(const MoveFlag rhs) {
+        return from_ordinal(to_underlying() | rhs.to_underlying());
     }
 };
 

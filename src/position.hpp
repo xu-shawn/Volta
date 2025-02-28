@@ -79,6 +79,11 @@ struct PositionState {
     constexpr BitBoard bb(const PieceType piece_type) const {
         return by_piece_type[piece_type.to_underlying()];
     }
+
+    template<typename... Ts>
+    constexpr BitBoard bb(const Ts... args) const {
+        return (bb(args) | ...);
+    }
 };
 
 std::ostream& operator<<(std::ostream& os, const PositionState& pos);

@@ -42,13 +42,10 @@ consteval std::array<BitBoard, Square::COUNT()> generate_knight_attacks() {
 
         attacks[sq] |= shift(sq_bb, Direction::NORTH(), Direction::NORTH_EAST());
         attacks[sq] |= shift(sq_bb, Direction::NORTH(), Direction::NORTH_WEST());
-
         attacks[sq] |= shift(sq_bb, Direction::SOUTH(), Direction::SOUTH_EAST());
         attacks[sq] |= shift(sq_bb, Direction::SOUTH(), Direction::SOUTH_WEST());
-
         attacks[sq] |= shift(sq_bb, Direction::WEST(), Direction::NORTH_WEST());
         attacks[sq] |= shift(sq_bb, Direction::WEST(), Direction::SOUTH_WEST());
-
         attacks[sq] |= shift(sq_bb, Direction::EAST(), Direction::NORTH_EAST());
         attacks[sq] |= shift(sq_bb, Direction::EAST(), Direction::SOUTH_EAST());
     }
@@ -63,11 +60,12 @@ constexpr BitBoard generate_mask_ray(const Square start, const Direction dir) {
 
     while ((sq_bb = next_bb))
     {
-        attack |= sq_bb;
         next_bb = shift(sq_bb, dir);
 
         if (!next_bb)
             break;
+
+        attack |= sq_bb;
     }
 
     return attack;
@@ -75,7 +73,7 @@ constexpr BitBoard generate_mask_ray(const Square start, const Direction dir) {
 
 template<typename... DirectionType>
 constexpr BitBoard generate_mask_rays(const Square start, const DirectionType... dir) {
-    return (generate_mask_ray(start, dir) || ...);
+    return (generate_mask_ray(start, dir) | ...);
 }
 
 constexpr BitBoard bishop_mask(const Square sq) {
@@ -125,7 +123,7 @@ generate_attack_ray(const BitBoard occ, const Square start, const Direction dir)
 template<typename... DirectionType>
 constexpr BitBoard
 generate_attack_rays(const BitBoard occ, const Square start, const DirectionType... dir) {
-    return (generate_attack_ray(occ, start, dir) || ...);
+    return (generate_attack_ray(occ, start, dir) | ...);
 }
 
 constexpr BitBoard generate_bishop_attacks(Square sq, BitBoard occ) {

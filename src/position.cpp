@@ -66,16 +66,17 @@ void PositionState::make_move(const Move move) noexcept {
         {
             if (move.is_ep())
             {
-                remove_piece(Piece::make(PieceType::PAWN(), ~side_to_move), en_passant_destination);
+                remove_piece(Piece::make(PieceType::PAWN(), ~side_to_move),
+                             en_passant_destination_);
                 rule50 = 0;
             }
 
             if (distance(from.rank(), to.rank()) == 2)
             {
                 if (side_to_move == Color::WHITE())
-                    en_passant_destination = shift(to, Direction::SOUTH());
+                    en_passant_destination_ = shift(to, Direction::SOUTH());
                 else
-                    en_passant_destination = shift(to, Direction::NORTH());
+                    en_passant_destination_ = shift(to, Direction::NORTH());
             }
 
             rule50 = 0;
@@ -85,7 +86,7 @@ void PositionState::make_move(const Move move) noexcept {
         add_piece(moved_piece, to);
     }
 
-    en_passant_destination = Square::NONE();
+    en_passant_destination_ = Square::NONE();
 
     side_to_move = ~side_to_move;
 }

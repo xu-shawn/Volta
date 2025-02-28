@@ -78,20 +78,22 @@ void append_pawn_moves(MoveList& movelist, const PositionState& pos, const Color
     }
 
     {
-        BitBoard side_push_west = shift(pawn_bb, push_dir, Direction::WEST()) & them_occ;
-        while (side_push_west)
+        BitBoard capture_west = shift(pawn_bb, push_dir, Direction::WEST())
+                              & (them_occ | pos.en_passant_destination().to_bb());
+        while (capture_west)
         {
-            const Square to = Square::from_ordinal(side_push_west.pop_lsb());
+            const Square to = Square::from_ordinal(capture_west.pop_lsb());
             movelist.push_back(
               Move(MoveFlag::CAPTURE(), shift(to, push_dir.reverse(), Direction::EAST()), to));
         }
     }
 
     {
-        BitBoard side_push_east = shift(pawn_bb, push_dir, Direction::EAST()) & them_occ;
-        while (side_push_east)
+        BitBoard capture_east = shift(pawn_bb, push_dir, Direction::EAST())
+                              & (them_occ | pos.en_passant_destination().to_bb());
+        while (capture_east)
         {
-            const Square to = Square::from_ordinal(side_push_east.pop_lsb());
+            const Square to = Square::from_ordinal(capture_east.pop_lsb());
             movelist.push_back(
               Move(MoveFlag::CAPTURE(), shift(to, push_dir.reverse(), Direction::WEST()), to));
         }

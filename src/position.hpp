@@ -17,7 +17,7 @@ namespace Volta::Chess {
 
 struct PositionState {
    private:
-    Square       en_passant_destination;
+    Square       en_passant_destination_;
     std::uint8_t rule50;
     Color        side_to_move;
 
@@ -32,7 +32,7 @@ struct PositionState {
     constexpr PositionState& operator=(const PositionState& other) = default;
 
     constexpr PositionState() :
-        en_passant_destination{},
+        en_passant_destination_{},
         rule50{},
         side_to_move{Color::WHITE()},
         by_color{},
@@ -75,15 +75,19 @@ struct PositionState {
         return PositionState::from_fen("rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1");
     }
 
-    constexpr BitBoard bb(const Color color) const { return by_color[color.to_underlying()]; }
-    constexpr BitBoard bb(const PieceType piece_type) const {
+    constexpr BitBoard bb(const Color color) const noexcept {
+        return by_color[color.to_underlying()];
+    }
+    constexpr BitBoard bb(const PieceType piece_type) const noexcept {
         return by_piece_type[piece_type.to_underlying()];
     }
 
     template<typename... Ts>
-    constexpr BitBoard bb(const Ts... args) const {
+    constexpr BitBoard bb(const Ts... args) const noexcept {
         return (bb(args) | ...);
     }
+
+    constexpr Square en_passant_destination() const noexcept { return en_passant_destination_; };
 };
 
 std::ostream& operator<<(std::ostream& os, const PositionState& pos);

@@ -142,7 +142,7 @@ class Square {
     constexpr auto ordinal() const noexcept { return to_underlying(); }
     constexpr      operator std::string() const noexcept {
         auto square = std::string();
-        square.push_back('A' + file().to_underlying());
+        square.push_back('a' + file().to_underlying());
         square.push_back('1' + rank().to_underlying());
         return square;
     }

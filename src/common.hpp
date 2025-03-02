@@ -49,7 +49,7 @@ class Direction {
     static constexpr Direction SOUTH_EAST() { return underlying::SOUTH_EAST; }
     static constexpr Direction SOUTH_WEST() { return underlying::SOUTH_WEST; }
 
-    constexpr Direction reverse() const { return static_cast<underlying>(to_underlying()); }
+    constexpr Direction reverse() const { return static_cast<underlying>(-to_underlying()); }
 };
 
 class Color {

@@ -53,31 +53,72 @@ class PRNG {
 
 template<typename T, std::size_t N>
 class fixed_vector {
-   private:
-    std::array<T, N> data;
-    std::size_t      size;
-
    public:
-    constexpr fixed_vector() :
-        size{0} {}
+    using array_type             = std::array<T, N>;
+    using value_type             = T;
+    using size_type              = typename array_type::size_type;
+    using difference_type        = typename array_type::difference_type;
+    using reference              = typename array_type::reference;
+    using const_reference        = typename array_type::const_reference;
+    using pointer                = typename array_type::pointer;
+    using const_pointer          = typename array_type::const_pointer;
+    using iterator               = typename array_type::iterator;
+    using const_iterator         = typename array_type::const_iterator;
+    using reverse_iterator       = typename array_type::reverse_iterator;
+    using const_reverse_iterator = typename array_type::const_reverse_iterator;
+
+    fixed_vector() :
+        size_{0} {}
+
+    constexpr fixed_vector(std::initializer_list<T> init_list) :
+        data_{init_list},
+        size_{init_list.size()} {}
+
     constexpr void push_back(const T& ele) {
-        assert(size < N);
-        data[size] = ele;
-        size++;
+        assert(size_ < N);
+        data_[size_] = ele;
+        size_++;
     }
+
     constexpr void push_back(T&& ele) {
-        assert(size < N);
-        data[size] = std::move(ele);
-        size++;
+        assert(size_ < N);
+        data_[size_] = std::move(ele);
+        size_++;
     }
-    constexpr T& operator[](const std::size_t idx) {
-        assert(idx < size);
-        return data[idx];
+
+    constexpr auto&       at(const std::size_t idx) { return data_.at(idx); }
+    constexpr const auto& at(const std::size_t idx) const { return data_.at(idx); }
+
+    constexpr auto& operator[](const std::size_t idx) noexcept {
+        assert(idx < size_);
+        return data_[idx];
     }
-    constexpr const T& operator[](const std::size_t idx) const {
-        assert(idx < size);
-        return data[idx];
+
+    constexpr const auto& operator[](const std::size_t idx) const noexcept {
+        assert(idx < size_);
+        return data_[idx];
     }
+
+    constexpr auto&       front() noexcept { return data_.front(); }
+    constexpr const auto& front() const noexcept { return data_.front(); }
+
+    constexpr auto&       back() noexcept { return data_[size_ - 1]; }
+    constexpr const auto& back() const noexcept { return data_[size_ - 1]; }
+
+    constexpr auto*       data() noexcept { return data_.data(); }
+    constexpr const auto* data() const noexcept { return data_.data(); }
+
+    constexpr auto begin() noexcept { return data_.begin(); }
+    constexpr auto begin() const noexcept { return data_.begin(); }
+    constexpr auto cbegin() const noexcept { return data_.begin(); }
+
+    constexpr auto end() noexcept { return std::next(data_.begin(), size_); }
+    constexpr auto end() const noexcept { return std::next(data_.begin(), size_); }
+    constexpr auto cend() const noexcept { return std::next(data_.begin(), size_); }
+
+   private:
+    array_type data_;
+    size_type  size_;
 };
 
 template<typename T>

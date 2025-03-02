@@ -109,6 +109,7 @@ class Move {
     std::uint16_t move;
 
    public:
+    Move() = default;
     constexpr Move(MoveFlag flag, Square from, Square to) noexcept :
         move{static_cast<std::uint16_t>((flag.to_underlying() << 12) | (from.ordinal() << 6)
                                         | (to.ordinal()))} {}
@@ -123,6 +124,15 @@ class Move {
     constexpr bool      is_promotion() const noexcept { return flag().is_promotion(); }
     constexpr bool      is_castling() const noexcept { return flag().is_castling(); }
     constexpr PieceType promtion_piece() const noexcept { return flag().get_promtion_piecetype(); }
+
+    constexpr std::string to_uci() const noexcept {
+        std::string ret = std::string(from()) + std::string(to());
+
+        if (is_promotion())
+            ret += promtion_piece().to_char();
+
+        return ret;
+    }
 };
 
 }

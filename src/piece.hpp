@@ -47,6 +47,28 @@ class PieceType {
         return static_cast<underlying>(ordinal);
     }
 
+    constexpr char to_char() const noexcept {
+        switch (piece_type)
+        {
+        case underlying::PAWN :
+            return 'p';
+        case underlying::KNIGHT :
+            return 'n';
+        case underlying::BISHOP :
+            return 'b';
+        case underlying::ROOK :
+            return 'r';
+        case underlying::QUEEN :
+            return 'q';
+        case underlying::KING :
+            return 'k';
+        case underlying::NONE :
+            return ' ';
+        }
+
+        return '0';
+    }
+
     constexpr bool operator==(const PieceType& other) const noexcept {
         return piece_type == other.piece_type;
     }

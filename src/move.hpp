@@ -14,7 +14,7 @@ class MoveFlag {
    private:
     enum class underlying : std::uint8_t {
         NORMAL                   = 0b0000,
-        CASLTING                 = 0b0001,
+        CASTLING                 = 0b0001,
         CAPTURE                  = 0b0100,
         EN_PASSANT               = 0b0110,
         PROMOTION                = 0b1000,
@@ -41,7 +41,7 @@ class MoveFlag {
 
     static constexpr MoveFlag NORMAL() noexcept { return underlying::NORMAL; }
     static constexpr MoveFlag CAPTURE() noexcept { return underlying::CAPTURE; }
-    static constexpr MoveFlag CASTLING() noexcept { return underlying::CAPTURE; }
+    static constexpr MoveFlag CASTLING() noexcept { return underlying::CASTLING; }
     static constexpr MoveFlag EN_PASSANT() noexcept { return underlying::EN_PASSANT; }
     static constexpr MoveFlag PROMOTION() noexcept { return underlying::PROMOTION; }
     static constexpr MoveFlag KNIGHT_PROMOTION() noexcept { return underlying::KNIGHT_PROMOTION; }
@@ -62,7 +62,7 @@ class MoveFlag {
     }
 
     static constexpr MoveFlag make_promotion(const PieceType pt) noexcept {
-        return from_ordinal(PROMOTION().to_underlying() & (pt.to_underlying() - 1));
+        return from_ordinal(PROMOTION().to_underlying() | (pt.to_underlying() - 1));
     }
 
     constexpr bool is_normal() const noexcept {
@@ -84,7 +84,7 @@ class MoveFlag {
     }
 
     constexpr bool is_castling() const noexcept {
-        return Utility::to_underlying(move_flag) == Utility::to_underlying(underlying::PROMOTION);
+        return Utility::to_underlying(move_flag) == Utility::to_underlying(underlying::CASTLING);
     }
 
     constexpr PieceType get_promtion_piecetype() const noexcept {

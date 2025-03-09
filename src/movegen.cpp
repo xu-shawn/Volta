@@ -129,14 +129,18 @@ void append_pawn_moves(MoveList& movelist, const PositionState& pos) {
             {
                 const Square to = Square::from_ordinal(capture_west_promotion.pop_lsb());
 
-                movelist.push_back(Move(MoveFlag::make_promotion(PieceType::KNIGHT()),
-                                        shift(to, push_dir.reverse(), Direction::EAST()), to));
-                movelist.push_back(Move(MoveFlag::make_promotion(PieceType::BISHOP()),
-                                        shift(to, push_dir.reverse(), Direction::EAST()), to));
-                movelist.push_back(Move(MoveFlag::make_promotion(PieceType::ROOK()),
-                                        shift(to, push_dir.reverse(), Direction::EAST()), to));
-                movelist.push_back(Move(MoveFlag::make_promotion(PieceType::QUEEN()),
-                                        shift(to, push_dir.reverse(), Direction::EAST()), to));
+                movelist.push_back(
+                  Move(MoveFlag::make_promotion(PieceType::KNIGHT()) | MoveFlag::CAPTURE(),
+                       shift(to, push_dir.reverse(), Direction::EAST()), to));
+                movelist.push_back(
+                  Move(MoveFlag::make_promotion(PieceType::BISHOP()) | MoveFlag::CAPTURE(),
+                       shift(to, push_dir.reverse(), Direction::EAST()), to));
+                movelist.push_back(
+                  Move(MoveFlag::make_promotion(PieceType::ROOK()) | MoveFlag::CAPTURE(),
+                       shift(to, push_dir.reverse(), Direction::EAST()), to));
+                movelist.push_back(
+                  Move(MoveFlag::make_promotion(PieceType::QUEEN()) | MoveFlag::CAPTURE(),
+                       shift(to, push_dir.reverse(), Direction::EAST()), to));
             }
         }
     }
@@ -168,14 +172,18 @@ void append_pawn_moves(MoveList& movelist, const PositionState& pos) {
             {
                 const Square to = Square::from_ordinal(capture_east_promotion.pop_lsb());
 
-                movelist.push_back(Move(MoveFlag::make_promotion(PieceType::KNIGHT()),
-                                        shift(to, push_dir.reverse(), Direction::WEST()), to));
-                movelist.push_back(Move(MoveFlag::make_promotion(PieceType::BISHOP()),
-                                        shift(to, push_dir.reverse(), Direction::WEST()), to));
-                movelist.push_back(Move(MoveFlag::make_promotion(PieceType::ROOK()),
-                                        shift(to, push_dir.reverse(), Direction::WEST()), to));
-                movelist.push_back(Move(MoveFlag::make_promotion(PieceType::QUEEN()),
-                                        shift(to, push_dir.reverse(), Direction::WEST()), to));
+                movelist.push_back(
+                  Move(MoveFlag::make_promotion(PieceType::KNIGHT()) | MoveFlag::CAPTURE(),
+                       shift(to, push_dir.reverse(), Direction::WEST()), to));
+                movelist.push_back(
+                  Move(MoveFlag::make_promotion(PieceType::BISHOP()) | MoveFlag::CAPTURE(),
+                       shift(to, push_dir.reverse(), Direction::WEST()), to));
+                movelist.push_back(
+                  Move(MoveFlag::make_promotion(PieceType::ROOK()) | MoveFlag::CAPTURE(),
+                       shift(to, push_dir.reverse(), Direction::WEST()), to));
+                movelist.push_back(
+                  Move(MoveFlag::make_promotion(PieceType::QUEEN()) | MoveFlag::CAPTURE(),
+                       shift(to, push_dir.reverse(), Direction::WEST()), to));
             }
         }
     }

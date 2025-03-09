@@ -84,7 +84,11 @@ void PositionState::make_move(const Move move) noexcept {
         }
 
         remove_piece(moved_piece, from);
-        add_piece(moved_piece, to);
+
+        if (move.is_promotion())
+            add_piece(Piece::make(move.promtion_piece(), stm()), to);
+        else
+            add_piece(moved_piece, to);
     }
 
     side_to_move = ~side_to_move;
@@ -128,7 +132,7 @@ std::ostream& operator<<(std::ostream& os, const PositionState& pos) {
 
     for (int rank_idx = Rank::COUNT() - 1; rank_idx >= 0; rank_idx--)
     {
-        for (int file_idx = File::COUNT() - 1; file_idx >= 0; file_idx--)
+        for (int file_idx = 0; file_idx < File::COUNT(); file_idx++)
             os << " | "
                << pos.piece_on(Square(File::from_ordinal(file_idx), Rank::from_ordinal(rank_idx)))
                     .to_char();

@@ -4,6 +4,7 @@
 #include <vector>
 #include <iostream>
 
+#include "attacks.hpp"
 #include "bbmanip.hpp"
 #include "common.hpp"
 #include "coordinates.hpp"
@@ -62,21 +63,25 @@ void PositionState::make_move(const Move move) noexcept {
             remove_piece(captured_piece, to);
             rule50 = 0;
         }
+
         if (moved_piece.type() == PieceType::PAWN())
         {
             if (move.is_ep())
             {
                 remove_piece(Piece::make(PieceType::PAWN(), ~side_to_move),
                              en_passant_destination_);
-                rule50 = 0;
             }
 
             if (distance(from.rank(), to.rank()) == 2)
             {
                 if (side_to_move == Color::WHITE())
+                {
                     en_passant_destination_ = shift(to, Direction::SOUTH());
+                }
                 else
+                {
                     en_passant_destination_ = shift(to, Direction::NORTH());
+                }
             }
 
             rule50 = 0;
@@ -89,6 +94,39 @@ void PositionState::make_move(const Move move) noexcept {
     en_passant_destination_ = Square::NONE();
 
     side_to_move = ~side_to_move;
+}
+
+bool PositionState::is_legal() const noexcept { return true; }
+
+bool PositionState::is_ok() const noexcept {
+    const BitBoard king_bb = bb(Piece::make(PieceType::KING(), ~stm()));
+    const Square   ksq     = Square::from_ordinal(king_bb.lsb());
+
+    if (Attacks::pawn_attacks(king_bb, ~stm()) & bb(Piece::make(PieceType::PAWN(), stm())))
+    {
+        return false;
+    }
+
+    if (Attacks::knight_attacks(ksq) & bb(Piece::make(PieceType::KNIGHT(), stm())))
+    {
+        return false;
+    }
+
+    const BitBoard occ = bb(Color::WHITE(), Color::BLACK());
+
+    if (Attacks::bishop_attacks(ksq, occ)
+        & bb(Piece::make(PieceType::BISHOP(), stm()), Piece::make(PieceType::QUEEN(), stm())))
+    {
+        return false;
+    }
+
+    if (Attacks::rook_attacks(ksq, occ)
+        & bb(Piece::make(PieceType::ROOK(), stm()), Piece::make(PieceType::QUEEN(), stm())))
+    {
+        return false;
+    }
+
+    return true;
 }
 
 std::ostream& operator<<(std::ostream& os, const PositionState& pos) {

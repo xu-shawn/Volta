@@ -40,8 +40,9 @@ struct PositionState {
         mailbox{} {};
 
     Piece piece_on(const Square square) const noexcept;
-
-    void make_move(const Move move) noexcept;
+    void  make_move(const Move move) noexcept;
+    bool  is_legal() const noexcept;
+    bool  is_ok() const noexcept;
 
     static constexpr PositionState from_fen(std::string_view fen) noexcept {
         PositionState ret{};
@@ -78,14 +79,21 @@ struct PositionState {
     constexpr BitBoard bb(const Color color) const noexcept {
         return by_color[color.to_underlying()];
     }
+
     constexpr BitBoard bb(const PieceType piece_type) const noexcept {
         return by_piece_type[piece_type.to_underlying()];
+    }
+
+    constexpr BitBoard bb(const Piece piece) const noexcept {
+        return bb(piece.type()) & bb(piece.color());
     }
 
     template<typename... Ts>
     constexpr BitBoard bb(const Ts... args) const noexcept {
         return (bb(args) | ...);
     }
+
+    constexpr Color stm() const noexcept { return side_to_move; }
 
     constexpr Square en_passant_destination() const noexcept { return en_passant_destination_; };
 };

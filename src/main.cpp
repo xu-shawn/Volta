@@ -17,4 +17,11 @@ int main() {
 
     for (const Move move : movelist)
         std::cout << move.to_uci() << std::endl;
+
+    for (const Move move : movelist)
+    {
+        PositionState newPos = pos;
+        newPos.make_move(move);
+        std::cout << newPos << std::endl;
+    }
 }

@@ -166,6 +166,12 @@ class Attacks {
     static std::array<std::array<BitBoard, 4096>, Square::COUNT()> RookAttacks;
 
    public:
+    static constexpr BitBoard pawn_attacks(BitBoard pawn_bb, Color side) {
+        const Direction push_dir = side == Color::WHITE() ? Direction::NORTH() : Direction::SOUTH();
+        return shift(pawn_bb, push_dir, Direction::EAST())
+             | shift(pawn_bb, push_dir, Direction::WEST());
+    }
+
     static constexpr BitBoard king_attacks(Square sq) { return KingAttacks[sq.ordinal()]; }
 
     static constexpr BitBoard knight_attacks(Square sq) { return KnightAttacks[sq.ordinal()]; }

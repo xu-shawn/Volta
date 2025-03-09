@@ -71,9 +71,11 @@ class Color {
     static constexpr Color       BLACK() noexcept { return underlying::BLACK; }
     static constexpr std::size_t COUNT() noexcept { return 2; }
 
-    constexpr Color operator~() const noexcept { return from_ordinal(!to_underlying()); }
+    constexpr Color operator~() const noexcept { return flip(); }
     constexpr bool  operator==(const Color& other) const noexcept { return color == other.color; }
     constexpr bool  operator==(const underlying& other) const noexcept { return color == other; }
+
+    constexpr Color flip() const noexcept { return from_ordinal(!to_underlying()); }
 
     constexpr Color(underlying c) :
         color{c} {}

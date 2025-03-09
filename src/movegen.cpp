@@ -15,22 +15,22 @@ void append_moves_from_sq_to_bb(MoveList&      movelist,
                                 BitBoard       bb,
                                 const MoveFlag flag);
 
-void append_pawn_moves(MoveList& movelist, const PositionState& pos, const Color side);
-void append_knight_moves(MoveList& movelist, const PositionState& pos, const Color side);
-void append_bishop_moves(MoveList& movelist, const PositionState& pos, const Color side);
-void append_rook_moves(MoveList& movelist, const PositionState& pos, const Color side);
-void append_queen_moves(MoveList& movelist, const PositionState& pos, const Color side);
-void append_king_moves(MoveList& movelist, const PositionState& pos, const Color side);
+void append_pawn_moves(MoveList& movelist, const PositionState& pos);
+void append_knight_moves(MoveList& movelist, const PositionState& pos);
+void append_bishop_moves(MoveList& movelist, const PositionState& pos);
+void append_rook_moves(MoveList& movelist, const PositionState& pos);
+void append_queen_moves(MoveList& movelist, const PositionState& pos);
+void append_king_moves(MoveList& movelist, const PositionState& pos);
 
 }  // namespace
 
-void append_all_moves(MoveList& movelist, const PositionState& pos, const Color side) {
-    append_pawn_moves(movelist, pos, side);
-    append_knight_moves(movelist, pos, side);
-    append_bishop_moves(movelist, pos, side);
-    append_rook_moves(movelist, pos, side);
-    append_queen_moves(movelist, pos, side);
-    append_king_moves(movelist, pos, side);
+void append_all_moves(MoveList& movelist, const PositionState& pos) {
+    append_pawn_moves(movelist, pos);
+    append_knight_moves(movelist, pos);
+    append_bishop_moves(movelist, pos);
+    append_rook_moves(movelist, pos);
+    append_queen_moves(movelist, pos);
+    append_king_moves(movelist, pos);
 }
 
 namespace {
@@ -46,10 +46,11 @@ void append_moves_from_sq_to_bb(MoveList&      movelist,
     }
 }
 
-void append_pawn_moves(MoveList& movelist, const PositionState& pos, const Color side) {
+void append_pawn_moves(MoveList& movelist, const PositionState& pos) {
+    const Color    side     = pos.stm();
     const BitBoard us_occ   = pos.bb(side);
     const BitBoard them_occ = pos.bb(~side);
-    const BitBoard occ      = us_occ & them_occ;
+    const BitBoard occ      = us_occ | them_occ;
 
     const BitBoard pawn_bb        = pos.bb(PieceType::PAWN()) & us_occ;
     const BitBoard starting_rank  = side == Color::WHITE() ? Rank::RANK_2() : Rank::RANK_7();
@@ -164,7 +165,8 @@ void append_pawn_moves(MoveList& movelist, const PositionState& pos, const Color
     }
 }
 
-void append_knight_moves(MoveList& movelist, const PositionState& pos, const Color side) {
+void append_knight_moves(MoveList& movelist, const PositionState& pos) {
+    const Color    side     = pos.stm();
     const BitBoard us_occ   = pos.bb(side);
     const BitBoard them_occ = pos.bb(~side);
 
@@ -180,7 +182,8 @@ void append_knight_moves(MoveList& movelist, const PositionState& pos, const Col
     }
 }
 
-void append_bishop_moves(MoveList& movelist, const PositionState& pos, const Color side) {
+void append_bishop_moves(MoveList& movelist, const PositionState& pos) {
+    const Color    side     = pos.stm();
     const BitBoard us_occ   = pos.bb(side);
     const BitBoard them_occ = pos.bb(~side);
 
@@ -196,7 +199,8 @@ void append_bishop_moves(MoveList& movelist, const PositionState& pos, const Col
     }
 }
 
-void append_rook_moves(MoveList& movelist, const PositionState& pos, const Color side) {
+void append_rook_moves(MoveList& movelist, const PositionState& pos) {
+    const Color    side     = pos.stm();
     const BitBoard us_occ   = pos.bb(side);
     const BitBoard them_occ = pos.bb(~side);
 
@@ -212,7 +216,8 @@ void append_rook_moves(MoveList& movelist, const PositionState& pos, const Color
     }
 }
 
-void append_queen_moves(MoveList& movelist, const PositionState& pos, const Color side) {
+void append_queen_moves(MoveList& movelist, const PositionState& pos) {
+    const Color    side     = pos.stm();
     const BitBoard us_occ   = pos.bb(side);
     const BitBoard them_occ = pos.bb(~side);
 
@@ -228,7 +233,8 @@ void append_queen_moves(MoveList& movelist, const PositionState& pos, const Colo
     }
 }
 
-void append_king_moves(MoveList& movelist, const PositionState& pos, const Color side) {
+void append_king_moves(MoveList& movelist, const PositionState& pos) {
+    const Color    side     = pos.stm();
     const BitBoard us_occ   = pos.bb(side);
     const BitBoard them_occ = pos.bb(~side);
 

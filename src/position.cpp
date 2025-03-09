@@ -44,7 +44,6 @@ void PositionState::remove_piece(const Piece piece, const Square square) noexcep
 }
 
 void PositionState::make_move(const Move move) noexcept {
-
     const Square from           = move.from();
     const Square to             = move.to();
     const Piece  moved_piece    = piece_on(move.from());
@@ -68,8 +67,7 @@ void PositionState::make_move(const Move move) noexcept {
         {
             if (move.is_ep())
             {
-                remove_piece(Piece::make(PieceType::PAWN(), ~side_to_move),
-                             en_passant_destination_);
+                remove_piece(Piece::make(PieceType::PAWN(), ~stm()), en_passant_destination_);
             }
 
             if (distance(from.rank(), to.rank()) == 2)

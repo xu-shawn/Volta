@@ -9,7 +9,7 @@ namespace Volta::Chess {
 
 using MoveList = Utility::fixed_vector<Move, 350>;
 
-void append_all_moves(MoveList& movelist, const PositionState& pos, const Color side);
+void append_all_moves(MoveList& movelist, const PositionState& pos);
 
 }
 

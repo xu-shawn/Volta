@@ -7,6 +7,7 @@
 #include <iostream>
 #include <string_view>
 
+#include "bbmanip.hpp"
 #include "bitboard.hpp"
 #include "common.hpp"
 #include "coordinates.hpp"
@@ -52,21 +53,36 @@ struct PositionState {
 
         assert(slices.size() == 6);
 
-        std::size_t curr_sq = 0;
+        std::uint8_t curr_sq_idx = Square(File::FILE_A(), Rank::RANK_8()).ordinal();
 
         for (const char ch : slices[0])
         {
             if (ch == '/')
-                continue;
-
-            if (std::isdigit(ch))
             {
-                curr_sq += ch - '0';
+                curr_sq_idx -= 16;
                 continue;
             }
 
-            ret.add_piece(Piece::from_char(ch), Square::from_ordinal(curr_sq));
-            curr_sq++;
+            if (std::isdigit(ch))
+            {
+                curr_sq_idx += ch - '0';
+                continue;
+            }
+
+            ret.add_piece(Piece::from_char(ch), Square::from_ordinal(curr_sq_idx));
+            curr_sq_idx++;
+        }
+
+        switch (slices[1].front())
+        {
+        case 'w' :
+            ret.side_to_move = Color::WHITE();
+            break;
+        case 'b' :
+            ret.side_to_move = Color::BLACK();
+            break;
+        default :
+            assert(false && "Fen parsing error: invalid side");
         }
 
         return ret;

@@ -119,29 +119,29 @@ class Piece {
     static constexpr Piece from_char(char ch) noexcept {
         switch (ch)
         {
-        case 'p' :
-            return Piece::WHITE_PAWN();
-        case 'n' :
-            return Piece::WHITE_KNIGHT();
-        case 'b' :
-            return Piece::WHITE_BISHOP();
-        case 'r' :
-            return Piece::WHITE_ROOK();
-        case 'q' :
-            return Piece::WHITE_QUEEN();
-        case 'k' :
-            return Piece::WHITE_KING();
         case 'P' :
-            return Piece::BLACK_PAWN();
+            return Piece::WHITE_PAWN();
         case 'N' :
-            return Piece::BLACK_KNIGHT();
+            return Piece::WHITE_KNIGHT();
         case 'B' :
-            return Piece::BLACK_BISHOP();
+            return Piece::WHITE_BISHOP();
         case 'R' :
-            return Piece::BLACK_ROOK();
+            return Piece::WHITE_ROOK();
         case 'Q' :
-            return Piece::BLACK_QUEEN();
+            return Piece::WHITE_QUEEN();
         case 'K' :
+            return Piece::WHITE_KING();
+        case 'p' :
+            return Piece::BLACK_PAWN();
+        case 'n' :
+            return Piece::BLACK_KNIGHT();
+        case 'b' :
+            return Piece::BLACK_BISHOP();
+        case 'r' :
+            return Piece::BLACK_ROOK();
+        case 'q' :
+            return Piece::BLACK_QUEEN();
+        case 'k' :
             return Piece::BLACK_KING();
         }
 

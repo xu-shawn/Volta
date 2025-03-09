@@ -46,6 +46,12 @@ class File {
         return File{static_cast<underlying_type_t>(ordinal)};
     }
 
+    static constexpr File from_char(char ch) {
+        assert(ch >= 'a');
+        assert(ch <= 'h');
+        return from_ordinal(ch - 'a');
+    }
+
     static constexpr File FILE_A() noexcept { return underlying::FILE_A; }
     static constexpr File FILE_B() noexcept { return underlying::FILE_B; }
     static constexpr File FILE_C() noexcept { return underlying::FILE_C; }
@@ -95,6 +101,12 @@ class Rank {
         assert(ordinal >= 0);
         assert(ordinal < 8);
         return Rank{static_cast<underlying_type_t>(ordinal)};
+    }
+
+    static constexpr Rank from_char(char ch) {
+        assert(ch >= '1');
+        assert(ch <= '8');
+        return from_ordinal(ch - '1');
     }
 
     static constexpr Rank RANK_1() noexcept { return underlying::RANK_1; }
@@ -164,6 +176,13 @@ class Square {
 
     static constexpr Square from_ordinal(auto ordinal) noexcept {
         return static_cast<underlying>(ordinal);
+    }
+
+    static constexpr Square from_string(std::string_view str) noexcept {
+        if (str.length() != 2)
+            return NONE();
+
+        return Square(File::from_char(str[0]), Rank::from_char(str[1]));
     }
 };
 

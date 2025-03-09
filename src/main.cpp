@@ -6,9 +6,11 @@
 #include "piece.hpp"
 #include "position.hpp"
 #include "movegen.hpp"
+#include "uci.hpp"
 
 int main() {
     using namespace Volta::Chess;
+    using namespace Volta::Engine;
 
     Attacks::init_magics();
 
@@ -29,12 +31,13 @@ int main() {
         std::cout << newPos << std::endl;
     }
 
-    std::cout << perft(pos, 2) << std::endl;
-    std::cout << perft(pos, 3) << std::endl;
-    std::cout << perft(pos, 4) << std::endl;
     std::cout << perft(pos, 5) << std::endl;
 
-    pos = PositionState::from_fen("rnbqkbnr/1ppppppp/p7/1B6/4P3/8/PPPP1PPP/RNBQK1NR b KQkq - 1 2");
+    // pos = PositionState::from_fen("rnbqkbnr/2pppppp/p7/Pp6/8/8/1PPPPPPP/RNBQKBNR w KQkq b6 0 3");
 
-    split_perft(pos, 1);
+    // Move move = move_from_uci(pos, "a5b6");
+
+    // pos.make_move(move);
+
+    split_perft(pos, 6);
 }

@@ -42,7 +42,7 @@ struct PositionState {
 
     Piece piece_on(const Square square) const noexcept;
     void  make_move(const Move move) noexcept;
-    bool  is_legal() const noexcept;
+    bool  is_legal(const Move move) const noexcept;
     bool  is_ok() const noexcept;
 
     static constexpr PositionState from_fen(std::string_view fen) noexcept {
@@ -84,6 +84,8 @@ struct PositionState {
         default :
             assert(false && "Fen parsing error: invalid side");
         }
+
+        ret.en_passant_destination_ = Square::from_string(slices[3]);
 
         return ret;
     }

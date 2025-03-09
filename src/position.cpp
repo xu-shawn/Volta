@@ -50,6 +50,7 @@ void PositionState::make_move(const Move move) noexcept {
     const Piece  captured_piece = piece_on(move.to());
 
     rule50++;
+    en_passant_destination_ = Square::NONE();
 
     if (move.is_castling())
     {
@@ -63,23 +64,20 @@ void PositionState::make_move(const Move move) noexcept {
             rule50 = 0;
         }
 
+        const Direction push_dir =
+          side_to_move == Color::WHITE() ? Direction::NORTH() : Direction::SOUTH();
+
         if (moved_piece.type() == PieceType::PAWN())
         {
             if (move.is_ep())
             {
-                remove_piece(Piece::make(PieceType::PAWN(), ~stm()), en_passant_destination_);
+                remove_piece(Piece::make(PieceType::PAWN(), ~stm()),
+                             shift(move.to(), push_dir.reverse()));
             }
 
             if (distance(from.rank(), to.rank()) == 2)
             {
-                if (side_to_move == Color::WHITE())
-                {
-                    en_passant_destination_ = shift(to, Direction::SOUTH());
-                }
-                else
-                {
-                    en_passant_destination_ = shift(to, Direction::NORTH());
-                }
+                en_passant_destination_ = shift(to, push_dir.reverse());
             }
 
             rule50 = 0;
@@ -89,12 +87,10 @@ void PositionState::make_move(const Move move) noexcept {
         add_piece(moved_piece, to);
     }
 
-    en_passant_destination_ = Square::NONE();
-
     side_to_move = ~side_to_move;
 }
 
-bool PositionState::is_legal() const noexcept { return true; }
+bool PositionState::is_legal(const Move move) const noexcept { return true; }
 
 bool PositionState::is_ok() const noexcept {
     const BitBoard king_bb = bb(Piece::make(PieceType::KING(), ~stm()));

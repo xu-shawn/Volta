@@ -133,6 +133,11 @@ class Move {
 
         return ret;
     }
+
+    static constexpr Move NONE() {
+        return Move(MoveFlag::NORMAL(), Square(File::FILE_A(), Rank::RANK_1()),
+                    Square(File::FILE_A(), Rank::RANK_1()));
+    }
 };
 
 }

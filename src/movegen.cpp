@@ -100,9 +100,18 @@ void append_pawn_moves(MoveList& movelist, const PositionState& pos) {
         }
     }
 
+    const Square ep_dest = pos.en_passant_destination();
+
     {
-        const BitBoard capture_west = shift(pawn_bb, push_dir, Direction::WEST())
-                                    & (them_occ | pos.en_passant_destination().to_bb());
+        const BitBoard attack_west  = shift(pawn_bb, push_dir, Direction::WEST());
+        const BitBoard capture_west = attack_west & them_occ;
+
+        if (ep_dest.to_bb() & attack_west)
+        {
+            movelist.push_back(Move(MoveFlag::EN_PASSANT(),
+                                    shift(ep_dest, push_dir.reverse(), Direction::EAST()),
+                                    ep_dest));
+        }
 
         {
             BitBoard capture_west_normal = capture_west & ~promotion_rank;
@@ -133,8 +142,15 @@ void append_pawn_moves(MoveList& movelist, const PositionState& pos) {
     }
 
     {
-        const BitBoard capture_east = shift(pawn_bb, push_dir, Direction::EAST())
-                                    & (them_occ | pos.en_passant_destination().to_bb());
+        const BitBoard attack_east  = shift(pawn_bb, push_dir, Direction::EAST());
+        const BitBoard capture_east = attack_east & them_occ;
+
+        if (ep_dest.to_bb() & attack_east)
+        {
+            movelist.push_back(Move(MoveFlag::EN_PASSANT(),
+                                    shift(ep_dest, push_dir.reverse(), Direction::WEST()),
+                                    ep_dest));
+        }
 
         {
             BitBoard capture_east_normal = capture_east & ~promotion_rank;

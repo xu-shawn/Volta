@@ -137,12 +137,12 @@ constexpr BitBoard generate_rook_attacks(Square sq, BitBoard occ) {
 }
 
 struct MagicEntry {
-    BitBoard      mask;
-    std::uint64_t magic;
-    std::uint8_t  shift;
+    BitBoard     mask;
+    std::int64_t magic;
+    std::uint8_t shift;
 
     constexpr std::size_t get_index(BitBoard bb) {
-        return (static_cast<std::uint64_t>(bb & mask) * magic) >> shift;
+        return (static_cast<std::int64_t>(static_cast<std::uint64_t>(bb & mask)) * magic) >> shift;
     }
 };
 

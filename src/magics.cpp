@@ -75,7 +75,7 @@ constexpr Detail::MagicEntry find_magic(const Square sq, F1&& mask_fn, F2&& atta
 
     for (std::size_t curr_generation = 1;; curr_generation++)
     {
-        std::uint64_t magic_candidate = rng.sparse_rand();
+        std::int64_t magic_candidate = rng.sparse_rand();
         if (test_magic(magic_candidate, shift, blockers, attacks, generation, map, curr_generation,
                        sq))
             return {.mask = mask, .magic = magic_candidate, .shift = shift};

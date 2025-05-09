@@ -66,9 +66,10 @@ constexpr Detail::MagicEntry find_magic(const Square sq, F1&& mask_fn, F2&& atta
     const std::uint8_t shift = Square::COUNT() - mask.popcount();
 
     const std::vector<BitBoard> blockers = blocker_configurations(mask);
-    const std::vector<BitBoard> attacks  = attacks_under_blockers(sq, blockers, attacks_fn);
-    std::vector<std::size_t>    generation(blockers.size(), 0ULL);
-    std::vector<BitBoard>       map(blockers.size(), 0ULL);
+    const std::vector<BitBoard> attacks =
+      attacks_under_blockers(sq, blockers, std::forward<F2>(attacks_fn));
+    std::vector<std::size_t> generation(blockers.size(), 0ULL);
+    std::vector<BitBoard>    map(blockers.size(), 0ULL);
 
     assert(blockers.size() == attacks.size());
 

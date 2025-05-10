@@ -46,7 +46,8 @@ constexpr bool test_magic(const std::uint64_t          magic,
                           const Square                 sq) {
     for (std::size_t i = 0; i < blockers.size(); i++)
     {
-        const std::size_t idx = (magic * std::uint64_t(blockers[i])) >> shift;
+        const std::size_t idx =
+          std::uint64_t((magic * std::int64_t(std::uint64_t(blockers[i])))) >> shift;
 
         if (generation[idx] == curr_generation && map[idx] != 0ULL && map[idx] != attacks[i])
             return false;

@@ -142,7 +142,9 @@ struct MagicEntry {
     std::uint8_t shift;
 
     constexpr std::size_t get_index(BitBoard bb) {
-        return (static_cast<std::int64_t>(static_cast<std::uint64_t>(bb & mask)) * magic) >> shift;
+        return static_cast<std::uint64_t>(
+                 static_cast<std::int64_t>(static_cast<std::uint64_t>(bb & mask)) * magic)
+            >> shift;
     }
 };
 
